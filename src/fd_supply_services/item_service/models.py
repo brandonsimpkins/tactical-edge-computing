@@ -1,0 +1,28 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.db import models
+
+
+class UnitOfIssue(models.Model):
+    code = models.CharField(max_length=2, primary_key=True)
+    description = models.CharField(max_length=16)
+
+    class Meta:
+        ordering = ('code',)
+
+class Item(models.Model):
+    nsn = models.CharField("national stock number",
+                           max_length=13, primary_key=True)
+    category = models.CharField(max_length=100, blank=True, default='')
+    common_name = models.CharField(max_length=100)
+    description = models.CharField(max_length=255)
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    ui = models.ForeignKey(UnitOfIssue)
+    aac = models.CharField("acquisition advice code", max_length=1)
+    # created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('nsn',)
+
+
