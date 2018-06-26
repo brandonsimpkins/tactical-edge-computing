@@ -35,3 +35,6 @@ chmod 0700 $BIN_DIR/docker-compose
 echo
 echo "Validating path"
 which docker-compose
+
+echo
+docker-compose --version
