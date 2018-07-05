@@ -2,8 +2,14 @@
 requirements.txt:
 	pip freeze > requirements.txt
 
-root-owned:
-	find . ! -user ec2-user
+virtualenv:
+	virtualenv ~/dev-env; \
+	source ~/dev-env/bin/activate; \
+	pip install -r requirements.txt
 
-chown:
-	sudo chown ec2-user:ec2-user -c -R $(PWD)
+find-unowned-files:
+	find . ! -user $(USER) -exec ls -lad {} \;
+
+chown: find-unowned-files
+	sudo chown $(USER):$(USER) -c -R .
+
