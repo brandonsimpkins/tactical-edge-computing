@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  supply-db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: changeme
+      PGDATA: /data/postgres-data
+    volumes:
+      - postgres-data:/data/postgres-data
+      - postgres-db-dumps:/data/postgres-db-dumps
+
+  supply-rest-service:
+    image: supply-rest-service
+    build:
+      context: .
+      dockerfile: Dockerfile-supply-rest-services
+      args:
+        - buildnumber
+        - gitcommithash
+    command: ./start-web-container.sh
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - supply-db
+
+        #  healthcheck:
+        #    test: ["CMD", "curl", "-f", "http://localhost"]
+        #    interval: 1m30s
+        #    timeout: 10s
+        #    retries: 3
+        #    start_period: 40s
+        #
+
+volumes:
+  postgres-data:
+  postgres-db-dumps:
