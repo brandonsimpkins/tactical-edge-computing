@@ -11,6 +11,9 @@ class UnitOfIssue(models.Model):
     class Meta:
         ordering = ('code',)
 
+    def __str__(self):
+        return "{0} - {1}".format(self.code, self.description)
+
 class Item(models.Model):
     nsn = models.CharField("national stock number",
                            max_length=13, primary_key=True)
@@ -25,4 +28,6 @@ class Item(models.Model):
     class Meta:
         ordering = ('nsn',)
 
+    def __str__(self):
+        return "Item NSN - {1}".format(self.nsn)
 
