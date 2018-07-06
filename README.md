@@ -26,21 +26,21 @@
    ...
 
 ## TODO
-. Create reverse proxy and x509 auth for django app
-. Create container for processing backups / upload to s3?
+- Create reverse proxy and x509 auth for django app
+- Create container for processing backups / upload to s3?
 
 ## Notes / Links
-. This looks like the real deal, setting up a nginx reverse proxy and
+- This looks like the real deal, setting up a nginx reverse proxy and
   forwarding onto a generic wsgi application.
-  . [https://github.com/peopledoc/django-x509]
-  . [https://medium.com/@joatmon08/using-containers-to-learn-nginx-reverse-proxy-6be8ac75a757]
-. Django module you install that ties the user management to x509 header
+  - [https://github.com/peopledoc/django-x509]
+  - [https://medium.com/@joatmon08/using-containers-to-learn-nginx-reverse-proxy-6be8ac75a757]
+- Django module you install that ties the user management to x509 header
   fields.
-  . [https://github.com/nimbis/django-x509-auth]
-. AWS Reference Architectures:
-  . [https://github.com/awslabs/ecs-refarch-continuous-deployment]
-  . [https://aws.amazon.com/blogs/compute/nginx-reverse-proxy-sidecar-container-on-amazon-ecs/
-. Native django integration with external auth:
-  . [https://docs.djangoproject.com/en/dev/howto/auth-remote-user/]
+  - [https://github.com/nimbis/django-x509-auth]
+- AWS Reference Architectures:
+  - [https://github.com/awslabs/ecs-refarch-continuous-deployment]
+  - [https://aws.amazon.com/blogs/compute/nginx-reverse-proxy-sidecar-container-on-amazon-ecs/
+- Native django integration with external auth:
+  - [https://docs.djangoproject.com/en/dev/howto/auth-remote-user/]
 
 
