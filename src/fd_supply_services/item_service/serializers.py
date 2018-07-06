@@ -1,5 +1,14 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from item_service.models import Item, UnitOfIssue
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    """
+
+    class Meta:
+        model = User
+        fields = '__all__'
 
 class UnitOfIssueSerializer(serializers.HyperlinkedModelSerializer):
     """
