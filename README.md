@@ -6,16 +6,17 @@
    Cloud9 instances work well too. I created mine with an Elastic IP just to
    keep my client ssh config static.
 2. Clone dotfiles onto the dev server (presumably into the home directory):
-   ...
+   ```
    [ec2-user@ip-10-200-208-28 ~] git clone https://github.com/brandonsimpkins/dot-files
-   ...
+   ```
+
 3. Install the dotfiles:
-   ...
+   ```
    ~/dot-files/install.sh
-   ...
+   ```
 4. Create a host entry in your workstation ~/.ssh/config file. This allows for
    local port forwarding over 8000.
-   ...
+   ```
    Host bender
      Hostname 18.207.62.105
      User ec2-user
@@ -23,7 +24,7 @@
      LocalForward 8000 localhost:8000
 
    ServerAliveInterval 120
-   ...
+   ```
 
 ## TODO
 - Create reverse proxy and x509 auth for django app
