@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  fd-reverse-proxy:
+    image: fd-reverse-proxy
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - buildnumber
+        - gitcommithash
+    ports:
+      - "80:80"
+    networks:
+      default:
+        aliases:
+          - reverse-proxy.internal.com
+
+networks:
+  default:
+    external:
+      name: fd_supply_services_localbridgenetwork
+

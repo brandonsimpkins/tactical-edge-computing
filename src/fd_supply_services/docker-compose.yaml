@@ -10,6 +10,11 @@ services:
     volumes:
       - postgres-data:/data/postgres-data
       - postgres-db-dumps:/data/postgres-db-dumps
+    networks:
+      localbridgenetwork:
+        aliases:
+          - supply-db
+          - supply-db.internal.com
 
   supply-rest-service:
     image: supply-rest-service
@@ -26,6 +31,10 @@ services:
       - "8000:8000"
     depends_on:
       - supply-db
+    networks:
+      localbridgenetwork:
+        aliases:
+          - supply-rest-service.internal.com
 
         #  healthcheck:
         #    test: ["CMD", "curl", "-f", "http://localhost"]
@@ -38,3 +47,7 @@ services:
 volumes:
   postgres-data:
   postgres-db-dumps:
+
+networks:
+  localbridgenetwork:
+    driver: bridge
