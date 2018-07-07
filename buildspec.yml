@@ -30,9 +30,9 @@ phases:
     commands:
       - echo "build stage beginning"
       - docker build src/fd_supply_services/ -t $REST_IMAGE:$REST_TAG
-      - docker tag $REST_IMAGE:$REST_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REST_IMAGE:$REST_TAG
+      - docker tag $REST_IMAGE:$REST_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/test-ecr-repo
       - docker build src/reverse-proxy/ -t $PROXY_IMAGE:$PROXY_TAG
-      - docker tag $PROXY_IMAGE:$PROXY_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$PROXY_IMAGE:$PROXY_TAG
+      - docker tag $PROXY_IMAGE:$PROXY_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/test-ecr-repo
     finally:
       - echo "build stage finishing"
       - docker images
