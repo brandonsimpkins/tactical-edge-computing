@@ -3,8 +3,6 @@ version: 0.2
 env:
   variables:
     envkey: "value"
-  parameter-store:
-    param1: "paramater store value 1"
 
 phases:
   install:
