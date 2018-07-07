@@ -8,20 +8,26 @@ phases:
   install:
     commands:
       - echo "install stage beginning"
-      - yum update -y
-      - rpm -qa
+      - apk update
+      - apk info
     finally:
       - echo "install stage finishing"
   pre_build:
     commands:
       - echo "pre_build stage beginning"
+      - docker images list
+      - docker container list -a
     finally:
       - echo "pre_build stage finishing"
   build:
     commands:
       - echo "build stage beginning"
+      - docker build src/fd_supply_services/ -t "official-fd-supply-rest-services:latest"
+      - docker build src/reverse-proxy/
     finally:
       - echo "build stage finishing"
+      - docker images
+      - docker container list --all
   post_build:
     commands:
       - echo "post_build stage beginning"
