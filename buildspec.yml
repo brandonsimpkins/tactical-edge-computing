@@ -11,7 +11,7 @@ phases:
   install:
     commands:
       - echo "install stage beginning"
-      - env
+      - env | sort
       - which apt
       - apt list --installed
       - apt-get update -y
