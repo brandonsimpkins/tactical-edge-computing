@@ -36,6 +36,23 @@ services:
         aliases:
           - supply-rest-service.internal.com
 
+  fd-reverse-proxy:
+    image: fd-reverse-proxy
+    build:
+      context: .
+      dockerfile: reverse-proxy/Dockerfile
+      args:
+        - buildnumber
+        - gitcommithash
+    ports:
+      - "443:443"
+    depends_on:
+      - supply-rest-service
+    networks:
+      localbridgenetwork:
+        aliases:
+          - reverse-proxy.internal.com
+
         #  healthcheck:
         #    test: ["CMD", "curl", "-f", "http://localhost"]
         #    interval: 1m30s
@@ -51,3 +68,4 @@ volumes:
 networks:
   localbridgenetwork:
     driver: bridge
+
