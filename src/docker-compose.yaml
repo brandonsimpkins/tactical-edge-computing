@@ -20,7 +20,7 @@ services:
     image: supply-rest-service
     build:
       context: ./fd_supply_services
-      dockerfile: Dockerfile-supply-rest-services
+      dockerfile: Dockerfile
       args:
         - buildnumber
         - gitcommithash
