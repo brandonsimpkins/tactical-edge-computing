@@ -42,6 +42,8 @@ phases:
       - echo "post_build stage beginning"
       - docker save -o ${REST_IMAGE}-${REST_TAG}.tar $REST_IMAGE:$REST_TAG
       - docker save -o ${PROXY_IMAGE}-${PROXY_TAG}.tar $PROXY_IMAGE:$PROXY_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$REST_IMAGE
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$PROXY_IMAGE
     finally:
       - echo "post_build stage finishing"
 artifacts:
