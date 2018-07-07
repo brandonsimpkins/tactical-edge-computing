@@ -15,6 +15,6 @@ chown: find-unowned-files
 
 docker-clean:
 	docker container prune -f
-	-docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
-	-docker rmi $(docker images | grep "none" | awk '/ / { print $3 }')
+	-docker rmi `docker images --filter "dangling=true" -q --no-trunc`
+	-docker rmi `docker images | grep "none" | awk '/ / { print $3 }'`
 
