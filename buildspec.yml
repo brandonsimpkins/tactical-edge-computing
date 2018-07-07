@@ -2,7 +2,10 @@ version: 0.2
 
 env:
   variables:
-    envkey: "value"
+    REST_IMAGE:  "official-fd-supply-rest-services"
+    REST_TAG:    "latest"
+    PROXY_IMAGE: "official-fd-reverse-proxy"
+    PROXY_TAG:   "latest"
 
 phases:
   install:
@@ -23,8 +26,8 @@ phases:
   build:
     commands:
       - echo "build stage beginning"
-      - docker build src/fd_supply_services/ -t "official-fd-supply-rest-services:latest"
-      - docker build src/reverse-proxy/
+      - docker build src/fd_supply_services/ -t $REST_IMAGE:$REST_TAG
+      - docker build src/reverse-proxy/ -t $PROXY_IMAGE:$PROXY_TAG
     finally:
       - echo "build stage finishing"
       - docker images
@@ -32,11 +35,13 @@ phases:
   post_build:
     commands:
       - echo "post_build stage beginning"
+      - docker save -o ${REST_IMAGE}-${REST_TAG}.tar $REST_IMAGE:$REST_TAG
+      - docker save -o ${PROXY_IMAGE}-${PROXY_TAG}.tar $PROXY_IMAGE:$PROXY_TAG
     finally:
       - echo "post_build stage finishing"
 artifacts:
   files:
-    - test.tgz
+    - *.tar
   discard-paths: yes
   base-directory: .
 
