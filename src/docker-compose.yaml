@@ -39,8 +39,8 @@ services:
   fd-reverse-proxy:
     image: fd-reverse-proxy
     build:
-      context: .
-      dockerfile: reverse-proxy/Dockerfile
+      context: ./reverse-proxy
+      dockerfile: Dockerfile
       args:
         - buildnumber
         - gitcommithash
