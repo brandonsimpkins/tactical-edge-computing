@@ -41,7 +41,8 @@ phases:
       - echo "post_build stage finishing"
 artifacts:
   files:
-    - *.tar
+    - ${REST_IMAGE}-${REST_TAG}.tar
+    - ${PROXY_IMAGE}-${PROXY_TAG}.tar
   discard-paths: yes
   base-directory: .
 
