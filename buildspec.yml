@@ -8,8 +8,11 @@ phases:
   install:
     commands:
       - echo "install stage beginning"
-      - apk update
-      - apk info
+      - which apk
+      - which rpm
+      - which deb
+      - which dpkg
+      - which apt
     finally:
       - echo "install stage finishing"
   pre_build:
