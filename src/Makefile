@@ -13,3 +13,8 @@ find-unowned-files:
 chown: find-unowned-files
 	sudo chown $(USER):$(USER) -c -R .
 
+docker-clean:
+	docker container prune -f
+	-docker rmi $(docker images --filter "dangling=true" -q --no-trunc)
+	-docker rmi $(docker images | grep "none" | awk '/ / { print $3 }')
+
