@@ -19,12 +19,12 @@ services:
   supply-rest-service:
     image: supply-rest-service
     build:
-      context: .
+      context: ./fd_supply_services
       dockerfile: Dockerfile-supply-rest-services
       args:
         - buildnumber
         - gitcommithash
-    command: ./start-web-container.sh
+    command: ./fd_supply_services/start-web-container.sh
     volumes:
       - .:/code
     ports:

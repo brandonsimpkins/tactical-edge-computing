@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd $(dirname $0)
+
 # require that commands run successfully
 set -e
 
