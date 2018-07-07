@@ -29,6 +29,8 @@
 ## TODO
 - Create reverse proxy and x509 auth for django app
 - Create container for processing backups / upload to s3?
+- Fix generated certs to include subject alt names for chrome security checks
+  - https://www.techrepublic.com/article/how-to-resolve-ssl-certificate-warnings-produced-by-the-latest-chrome-update/
 
 ## Notes / Links
 - This looks like the real deal, setting up a nginx reverse proxy and
@@ -44,4 +46,9 @@
 - Native django integration with external auth:
   - [https://docs.djangoproject.com/en/dev/howto/auth-remote-user/]
 
+## AWS CLI command references:
+- Recursive copy into S3
+  ```
+  [ec2-user@bender dev-scripts]$ aws s3 cp ca-archive/ s3://isengard-tactical-edge-computing-dev-bucket/ca-archive --recursive
+  ```
 
