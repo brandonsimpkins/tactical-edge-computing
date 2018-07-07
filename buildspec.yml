@@ -8,11 +8,9 @@ phases:
   install:
     commands:
       - echo "install stage beginning"
-      - which apk
-      - which rpm
-      - which deb
-      - which dpkg
       - which apt
+      - apt list --installed
+      - apt-get update -y
     finally:
       - echo "install stage finishing"
   pre_build:
