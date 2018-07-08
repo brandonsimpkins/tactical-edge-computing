@@ -1,10 +1,20 @@
 
 database:
+
+  # note: changing these values will require you to delete the local postgres
+  # data volume. Assuming you have been using docker compose, you can delete it
+  # by using these commands:
+  #
+  # [ec2-user@bender src]$ docker-compose down
+  # [ec2-user@bender src]$ docker volume ls
+  # [ec2-user@bender src]$ docker volume rm src_postgres-data
+  #
+
   description: Local database settings to connect to postgres container
   engine: django.db.backends.postgresql
-  name: postgres
-  user: postgres
-  password: changeme
+  name: local_fd_supply_db
+  user: local_fd_supply_db_user
+  password: local_fd_supply_db_password
   host: local-dev-supply-db.internal.com
   port: 5432
 

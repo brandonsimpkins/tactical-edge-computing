@@ -4,8 +4,9 @@ services:
   supply-db:
     image: postgres:10.4-alpine
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: local_fd_supply_db
+      POSTGRES_USER: local_fd_supply_db_user
+      POSTGRES_PASSWORD: local_fd_supply_db_password
       PGDATA: /data/postgres-data
     volumes:
       - postgres-data:/data/postgres-data
