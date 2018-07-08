@@ -20,7 +20,7 @@ print("\nPrinting Environment Variables:")
 for key in sorted(os.environ.keys()):
     print("  ENV: {0}={1}".format(key, os.environ[key]))
 
-DEPLOYMENT_TYPE = os.environ.get("FD_SUPPLY_DEPLOYMENT")
+DEPLOYMENT_TYPE = os.environ.get("DEPLOYMENT_TYPE")
 print("\nDetected {0} Deployment Type\n".format(DEPLOYMENT_TYPE))
 
 if DEPLOYMENT_TYPE == "LOCAL-DEV":

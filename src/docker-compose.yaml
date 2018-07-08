@@ -19,7 +19,8 @@ services:
   supply-rest-service:
     image: supply-rest-service
     environment:
-      - FD_SUPPLY_DEPLOYMENT=LOCAL-DEV
+      - DEPLOYMENT_TYPE=LOCAL-DEV
+      # - DEPLOYMENT_TYPE=PRODUCTION
     build:
       context: ./fd_supply_services
       dockerfile: Dockerfile
