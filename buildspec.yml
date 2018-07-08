@@ -15,6 +15,9 @@ phases:
       - which apt
       - apt list --installed
       - apt-get update -y
+      - REST_REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REST_IMAGE
+      - PROXY_REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$PROXY_IMAGE
+
     finally:
       - echo "install stage finishing"
   pre_build:
@@ -30,9 +33,9 @@ phases:
     commands:
       - echo "build stage beginning"
       - docker build src/fd_supply_services/ -t $REST_IMAGE:$REST_TAG
-      - docker tag $REST_IMAGE:$REST_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REST_IMAGE
+      - docker tag $REST_IMAGE:$REST_TAG $REST_REPO_URI
       - docker build src/reverse-proxy/ -t $PROXY_IMAGE:$PROXY_TAG
-      - docker tag $PROXY_IMAGE:$PROXY_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$PROXY_IMAGE
+      - docker tag $PROXY_IMAGE:$PROXY_TAG $PROXY_REPO_URI
     finally:
       - echo "build stage finishing"
       - docker images
@@ -46,10 +49,14 @@ phases:
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$PROXY_IMAGE
     finally:
       - echo "post_build stage finishing"
+      - echo "Writing image definitions file..."
+      - printf '[{"name":"%s","imageUri":"%s"}]' $REST_IMAGE $REST_REPO_URI > ${REST_IMAGE}-definitions.json
+
 artifacts:
   files:
     - ${REST_IMAGE}-${REST_TAG}.tar
     - ${PROXY_IMAGE}-${PROXY_TAG}.tar
+    - ${REST_IMAGE}-definitions.json
   discard-paths: yes
   base-directory: .
 
