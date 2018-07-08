@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^item-service/', include('item_service.urls')),
+    url(r'^health-check/', include('health_check.urls')),
 ]

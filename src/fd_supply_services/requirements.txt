@@ -1,6 +1,7 @@
 certifi==2018.4.16
 chardet==3.0.4
 Django==1.11.13
+django-health-check==3.6.1
 djangorestframework==3.8.2
 httpie==0.9.9
 idna==2.7
