@@ -14,5 +14,6 @@ RUN apk update && \
  apk --purge del .build-deps
 
 ADD . /code/
+RUN chmod 755 /code/start-web-container.sh
 
 ENTRYPOINT ["/code/start-web-container.sh"]
