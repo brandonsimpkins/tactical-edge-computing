@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    REST_IMAGE:  "official-fd-supply-rest-services"
+    REST_IMAGE:  "official-fd-supply-rest-service"
     REST_TAG:    "latest"
     PROXY_IMAGE: "official-fd-reverse-proxy"
     PROXY_TAG:   "latest"
