@@ -31,14 +31,14 @@ if DEPLOYMENT_TYPE == "LOCAL-DEV":
 elif DEPLOYMENT_TYPE == "PRODUCTION":
     print("Loading PRODUCTION Settings")
     settings = {
-        database: {
-            engine: "django.db.backends.postgresql",
-            name: os.environ["DB_NAME"],
-            user: os.environ["DB_USER"],
-            password: os.environ["DB_PASSWORD"],
-            host: os.environ["DB_HOST"],
-            port: "5432",
-        }
+        'database': {
+            'engine': 'django.db.backends.postgresql',
+            'name': os.environ['DB_NAME'],
+            'user': os.environ['DB_USER'],
+            'password': os.environ['DB_PASSWORD'],
+            'host': os.environ['DB_HOST'],
+            'port': '5432',
+        },
     }
 
 else:
