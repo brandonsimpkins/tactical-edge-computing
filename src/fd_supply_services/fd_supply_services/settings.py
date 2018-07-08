@@ -28,10 +28,17 @@ if DEPLOYMENT_TYPE == "LOCAL-DEV":
     with open("config-local-dev.yaml", 'r') as stream:
         settings = yaml.load(stream)
 
+elif DEPLOYMENT_TYPE == "PRODUCTION":
+    print("Loading PRODUCTION Settings")
+    settings["database"]["engine"] = "django.db.backends.postgresql"
+    settings["database"]["name"] = os.environ["DB_NAME"]
+    settings["database"]["user"] = os.environ["DB_USER"]
+    settings["database"]["password"] = os.environ["DB_PASSWORD"]
+    settings["database"]["host"] = os.environ["DB_HOST"]
+    settings["database"]["port"] = "5432"
+
 else:
-    print("Loading Default PRODUCTION Settings")
-    with open("config-production.yaml", 'r') as stream:
-        settings = yaml.load(stream)
+    print("ERROR: Failed to load {0} settings!".format(DEPLOYMENT_TYPE))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
