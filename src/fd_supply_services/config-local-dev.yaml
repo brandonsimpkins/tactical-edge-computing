@@ -1,0 +1,10 @@
+
+database:
+  description: Local database settings to connect to postgres container
+  engine: django.db.backends.postgresql
+  name: postgres
+  user: postgres
+  password: changeme
+  host: local-dev-supply-db.internal.com
+  port: 5432
+

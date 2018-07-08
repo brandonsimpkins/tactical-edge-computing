@@ -2,7 +2,7 @@ version: '3'
 
 services:
   supply-db:
-    image: postgres
+    image: postgres:10.4-alpine
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: changeme
@@ -13,17 +13,19 @@ services:
     networks:
       localbridgenetwork:
         aliases:
-          - supply-db
-          - supply-db.internal.com
+          - local-dev-supply-db.internal.com
 
   supply-rest-service:
     image: supply-rest-service
+    environment:
+      - FD_SUPPLY_DEPLOYMENT=LOCAL-DEV
     build:
       context: ./fd_supply_services
       dockerfile: Dockerfile
       args:
         - buildnumber
         - gitcommithash
+    entrypoint: /bin/sh
     command: ./fd_supply_services/start-web-container.sh
     volumes:
       - .:/code

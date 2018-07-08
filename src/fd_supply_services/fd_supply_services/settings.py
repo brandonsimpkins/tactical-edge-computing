@@ -11,10 +11,30 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import yaml
+
+# load configuration settings
+# print("FD_SUPPLY_DEPLOYMENT: {0}".format(os.environ))
+
+print("\nPrinting Environment Variables:")
+for key in sorted(os.environ.keys()):
+    print("  ENV: {0}={1}".format(key, os.environ[key]))
+
+DEPLOYMENT_TYPE = os.environ.get("FD_SUPPLY_DEPLOYMENT")
+print("\nDetected {0} Deployment Type\n".format(DEPLOYMENT_TYPE))
+
+if DEPLOYMENT_TYPE == "LOCAL-DEV":
+    print("Loading LOCAL-DEV Settings")
+    with open("config-local-dev.yaml", 'r') as stream:
+        settings = yaml.load(stream)
+
+else:
+    print("Loading Default PRODUCTION Settings")
+    with open("config-production.yaml", 'r') as stream:
+        settings = yaml.load(stream)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -85,15 +105,16 @@ REST_FRAMEWORK = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'changeme',
-        'HOST': 'supply-db',
-        'PORT': 5432,
+        'ENGINE':   settings["database"]["engine"],
+        'NAME':     settings["database"]["name"],
+        'USER':     settings["database"]["user"],
+        'PASSWORD': settings["database"]["password"],
+        'HOST':     settings["database"]["host"],
+        'PORT':     settings["database"]["port"],
     }
 }
 
+print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators

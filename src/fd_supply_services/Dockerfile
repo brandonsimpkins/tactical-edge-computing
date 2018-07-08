@@ -14,3 +14,5 @@ RUN apk update && \
  apk --purge del .build-deps
 
 ADD . /code/
+
+ENTRYPOINT ["/code/start-web-container.sh"]

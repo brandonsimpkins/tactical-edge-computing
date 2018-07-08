@@ -8,5 +8,6 @@ idna==2.7
 psycopg2==2.7.5
 Pygments==2.2.0
 pytz==2018.4
+PyYaml==3.13
 requests==2.19.1
 urllib3==1.23
