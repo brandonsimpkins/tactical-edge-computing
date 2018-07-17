@@ -1,9 +1,5 @@
 version: 0.2
 
-env:
-  variables:
-    PYTHON_VERSION: "3.6"
-
 phases:
   install:
     commands:
@@ -12,9 +8,7 @@ phases:
       - which apt
       - apt list --installed
       - apt-get update -y
-      - apt-get install python${PYTHON_VERSION}-venv
-      - virtualenv --python=python${PYTHON_VERSION} ~/dev-env
-      - source ~/dev-env/bin/activate
+      - python --version
       - pip install pycodestyle
     finally:
       - echo "install stage finishing"
