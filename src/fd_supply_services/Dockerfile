@@ -8,6 +8,7 @@ WORKDIR /code
 COPY requirements.txt /code/
 
 RUN apk update && \
+ apk add curl && \
  apk add postgresql-libs && \
  apk add --virtual .build-deps gcc musl-dev postgresql-dev && \
  python3 -m pip install -r /code/requirements.txt --no-cache-dir && \
