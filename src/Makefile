@@ -8,6 +8,9 @@ virtualenv:
 	source ~/dev-env/bin/activate; \
 	pip install -r fd_supply_services/requirements.txt
 
+flake8:
+	source ~/dev-env/bin/activate && flake8
+
 find-unowned-files:
 	find . ! -user $(USER) -exec ls -lad {} \;
 
