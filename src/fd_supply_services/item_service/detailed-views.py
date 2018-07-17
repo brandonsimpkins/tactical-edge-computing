@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from item_service.models import ItemService
-from item_service.serializers import ItemServiceSerializer
+from item_service.models import Item
+from item_service.serializers import ItemSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -24,7 +24,6 @@ class ItemList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class ItemDetail(APIView):
