@@ -11,4 +11,7 @@ db.sqlite3
 # ignore files for reviewing local changes created by the 'dot-files' alias
 # 'gdiff' in my local .bash_profile settings.
 changes.patch
-.changes.patch.swp
+
+# ignore vim temporary files
+*.swp
+*.swo
