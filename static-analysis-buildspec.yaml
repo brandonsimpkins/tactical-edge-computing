@@ -9,24 +9,30 @@ phases:
       - apt list --installed
       - apt-get update -y
       - python --version
-      - pip install pycodestyle
+      - pip install flake8
     finally:
       - echo "install stage finishing"
   pre_build:
     commands:
       - echo "pre_build stage beginning"
-      - pycodestyle --version
+      - flake8 --version
     finally:
       - echo "pre_build stage finishing"
   build:
     commands:
       - echo "build stage beginning"
-      - pycodestyle src/fd_supply_services/
+      - flake8 src/fd_supply_services/ > flake8-output.txt
     finally:
       - echo "build stage finishing"
+      - cat flake8-output.txt
   post_build:
     commands:
       - echo "post_build stage beginning"
     finally:
       - echo "post_build stage finishing"
 
+artifacts:
+  files:
+    - flake8-output.txt
+  discard-paths: yes
+  base-directory: .
