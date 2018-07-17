@@ -3,9 +3,10 @@ requirements.txt:
 	pip freeze > requirements.txt
 
 virtualenv:
-	virtualenv ~/dev-env; \
+	rm -rf ~/dev-env
+	virtualenv --python=python3.6 ~/dev-env; \
 	source ~/dev-env/bin/activate; \
-	pip install -r requirements.txt
+	pip install -r fd_supply_services/requirements.txt
 
 find-unowned-files:
 	find . ! -user $(USER) -exec ls -lad {} \;
