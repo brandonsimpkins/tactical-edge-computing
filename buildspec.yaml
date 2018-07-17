@@ -12,7 +12,7 @@ phases:
     commands:
       - echo "install stage beginning"
       - env | sort
-      - test -z $AWS_ACCOUNT_ID && echo "AWS_ACCOUNT_ID env variable not set" && exit 1
+      - test "$AWS_ACCOUNT_ID" || echo 'AWS_ACCOUNT_ID env variable not set!'
       - which apt
       - apt list --installed
       - apt-get update -y
