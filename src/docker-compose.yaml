@@ -30,7 +30,7 @@ services:
     entrypoint: /bin/sh
     command: ./fd_supply_services/start-web-container.sh
     volumes:
-      - .:/code
+      - .:/opt/fd-supply-services
     ports:
       - "8000:8000"
     depends_on:
