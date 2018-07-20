@@ -3,18 +3,18 @@ FROM python:3.6-alpine
 MAINTAINER Brandon Simpkins <brandonsimpkins@gmail.com>
 
 ENV PYTHONUNBUFFERED 1
-RUN mkdir /code
-WORKDIR /code
-COPY requirements.txt /code/
+RUN mkdir -p /opt/fd-supply-services
+WORKDIR /opt/fd-supply-services
+COPY requirements.txt /opt/fd-supply-services
 
 RUN apk update && \
  apk add curl && \
  apk add postgresql-libs && \
  apk add --virtual .build-deps gcc musl-dev postgresql-dev && \
- python3 -m pip install -r /code/requirements.txt --no-cache-dir && \
+ python3 -m pip install -r /opt/fd-supply-services/requirements.txt --no-cache-dir && \
  apk --purge del .build-deps
 
-ADD . /code/
-RUN chmod 755 /code/start-web-container.sh
+ADD . /opt/fd-supply-services
+RUN chmod 755 /opt/fd-supply-services/start-web-container.sh
 
-ENTRYPOINT ["/code/start-web-container.sh"]
+ENTRYPOINT ["/opt/fd-supply-services/start-web-container.sh"]
