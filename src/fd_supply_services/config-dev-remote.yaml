@@ -1,0 +1,21 @@
+
+database:
+
+  # note: changing these values will require you to delete the local postgres
+  # data volume. Assuming you have been using docker compose, you can delete it
+  # by using these commands:
+  #
+  # [ec2-user@bender src]$ docker-compose down
+  # [ec2-user@bender src]$ docker volume ls
+  # [ec2-user@bender src]$ docker volume rm src_postgres-data
+  #
+
+  description: Remote database settings to connect to RDS
+  engine: django.db.backends.postgresql
+  name: fd_supply_db
+  user: cicddevtestsupplydbpostgres
+  password: cicddevtestsupplydbpassword
+  host: cicd-devtest-supply-db.cpx1pyq6qvz6.us-east-1.rds.amazonaws.com
+  port: 5432
+
+debug: True

@@ -13,39 +13,37 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import yaml
 
-# load configuration settings
-# print("FD_SUPPLY_DEPLOYMENT: {0}".format(os.environ))
-
-print("\nPrinting Environment Variables:")
-for key in sorted(os.environ.keys()):
-    print("  ENV: {0}={1}".format(key, os.environ[key]))
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DEPLOYMENT_TYPE = os.environ["DEPLOYMENT_TYPE"]
 print("\nDetected {0} Deployment Type\n".format(DEPLOYMENT_TYPE))
 
-if DEPLOYMENT_TYPE == "LOCAL-DEV":
+if DEPLOYMENT_TYPE == "DEV-LOCAL":
     print("Loading LOCAL-DEV Settings")
-    with open("config-local-dev.yaml", 'r') as stream:
+    with open(os.path.join(BASE_DIR, "config-dev-local.yaml"), 'r') as stream:
+        settings = yaml.load(stream)
+
+elif DEPLOYMENT_TYPE == "DEV-REMOTE":
+    print("Loading REMOTE-DEV Settings")
+    with open(os.path.join(BASE_DIR, "config-dev-remote.yaml"), 'r') as stream:
         settings = yaml.load(stream)
 
 elif DEPLOYMENT_TYPE == "PRODUCTION":
     print("Loading PRODUCTION Settings")
-    settings = {
-        'database': {
-            'engine': 'django.db.backends.postgresql',
-            'name': os.environ['DB_NAME'],
-            'user': os.environ['DB_USER'],
-            'password': os.environ['DB_PASSWORD'],
-            'host': os.environ['DB_HOST'],
-            'port': '5432',
-        },
-    }
+    with open(os.path.join(BASE_DIR, "config-production.yaml"), 'r') as stream:
+        settings = yaml.load(stream)
+
+    # TODO - storing database passwords in environment variables is not safe.
+    # Eventually need to move to Docker secrets / AWS secrets
+    settings['database']['name'] = os.environ['DB_NAME']
+    settings['database']['user'] = os.environ['DB_USER']
+    settings['database']['password'] = os.environ['DB_PASSWORD']
+    settings['database']['host'] = os.environ['DB_HOST']
 
 else:
     print("ERROR: Failed to load {0} settings!".format(DEPLOYMENT_TYPE))
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    raise SystemExit(1)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -54,8 +52,25 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '4&*-wc$!_%e=u&ti2&hd1-tr^!bx5#z&7k$dz))o8=5h=%h6$v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+try:
+    DEBUG = settings['debug']
+except KeyError:
+    print("Unable to read debug settings value, defaulting to FALSE.")
+print("DEBUG set to {0}".format(DEBUG))
 
+# do some environment debug logging
+if DEBUG:
+    print("\nPrinting Environment Variables:")
+    for key in sorted(os.environ.keys()):
+        print("  ENV: {0}={1}".format(key, os.environ[key]))
+
+# Setting allowed hosts to * basically disables this feature. This would
+# probably be something we'd like to lockdown in prod. At least using AWS
+# infrastructure you have other options (VPC, security groups, private subnets,
+# etc) that would probably be more ideal. But we could still pin down the
+# allowed host to *.elb.amazonaws.com since the traffic will be fronted by a
+# ALB / ELB.
 ALLOWED_HOSTS = ['*']
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -124,8 +139,6 @@ DATABASES = {
         'PORT':     settings["database"]["port"],
     }
 }
-
-print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators

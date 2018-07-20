@@ -19,7 +19,8 @@ services:
   supply-rest-service:
     image: supply-rest-service
     environment:
-      - DEPLOYMENT_TYPE=LOCAL-DEV
+      - DEPLOYMENT_TYPE=DEV-LOCAL
+      # - DEPLOYMENT_TYPE=DEV-REMOTE
       # - DEPLOYMENT_TYPE=PRODUCTION
     build:
       context: ./fd_supply_services

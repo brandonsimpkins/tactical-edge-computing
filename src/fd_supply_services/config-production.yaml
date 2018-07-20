@@ -10,11 +10,9 @@ database:
   # [ec2-user@bender src]$ docker volume rm src_postgres-data
   #
 
-  description: Local database settings to connect to postgres container
+  description: Production database settings to connect to RDS
   engine: django.db.backends.postgresql
-  name: local_fd_supply_db
-  user: local_fd_supply_db_user
-  password: local_fd_supply_db_password
-  host: local-dev-supply-db.internal.com
   port: 5432
 
+# disable debug mode in production
+debug: False
