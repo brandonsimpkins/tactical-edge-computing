@@ -2,15 +2,31 @@
 
 ## Local Development Settings
 
+
+
+
+
+
+
+
+
+
 1. Create a vanilla development server (I started with a AL1 EC2 instance), AWS
    Cloud9 instances work well too. I created mine with an Elastic IP just to
    keep my client ssh config static.
+   - Update! This works with AL2 as well.
+2. Install the following packages:
+   ```
+   [ec2-user@ip-10-200-209-79 ~]$ sudo yum install git docker
+   ```
 2. Clone dotfiles onto the dev server (presumably into the home directory):
    ```
    [ec2-user@ip-10-200-208-28 ~] git clone https://github.com/brandonsimpkins/dot-files
    ```
 
-3. Install the dotfiles:
+3. Install the dotfiles (note - this sets up a few things in the environment
+   that makes the next few steps work - e.g. prepending $HOME/bin to the
+   $PATH):
    ```
    ~/dot-files/install.sh
    ```
@@ -25,6 +41,35 @@
 
    ServerAliveInterval 120
    ```
+5. Clone this repo:
+   ```
+   [ec2-user@ip-10-200-209-79 ~]$ git clone https://github.com/brandonsimpkins/tactical-edge-computing
+   ```
+6. Install Docker Compose
+   ```
+   [ec2-user@ip-10-200-209-79 ~]$ ~/tactical-edge-computing/dev-scripts/get-docker-compose.sh
+   ```
+7. Following the [https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html]
+(Docker installation instructions) for Amazon Linux
+   ```
+   sudo service docker start
+   sudo usermod -a -G docker ec2-user
+   ```
+8. Log out and log back in again for the usermod command to take effect.
+9. Verify you can run docker commands without typing sudo:
+   ```
+   docker info
+   ```
+10. Change into the tactical computing directory and start the local apps!
+    ```
+    [ec2-user@ip-10-200-209-79 ~]$ cd tactical-edge-computing/src/
+    [ec2-user@ip-10-200-209-79 src]$ docker-compose up
+    ```
+    Note: currently I dont have a polling mechanism for the apps to wait to see
+    if the database is up, so you the first time you run the docker-compose up
+    command the app will fail to connect to the database since it has to create
+    the database file system and create the ddl.
+
 
 ## TODO
 - Create reverse proxy and x509 auth for django app
