@@ -2,54 +2,63 @@
 
 ## Local Development Settings
 
-1. Create a vanilla development server (I started with a AL1 EC2 instance), AWS
-   Cloud9 instances work well too. I created mine with an Elastic IP just to
-   keep my client ssh config static.
-   - Update! This works with AL2 as well.
-2. Install the following packages:
-   ```
-   [ec2-user@host ~]$ sudo yum install git docker
-   ```
-3. Clone dot-files onto the dev server (ideally into the home directory):
-   ```
-   [ec2-user@host ~]$ git clone https://github.com/brandonsimpkins/dot-files
-   ```
-4. Install the dotfiles (note - this sets up a few things in the environment
-   that makes the next few steps work - e.g. prepending $HOME/bin to the
-   $PATH):
-   ```
-   [ec2-user@host ~]$ ~/dot-files/install.sh
-   ```
-5. Create a host entry in your workstation ~/.ssh/config file. This allows for
-   local port forwarding over 8000.
-   ```
-   Host bender
-     Hostname 18.207.62.105
-     User ec2-user
-     IdentityFile ~/.ssh/keys/bssimpk-dev.pem
-     LocalForward 8000 localhost:8000
+01. Create a vanilla development server (I started with a AL1 EC2 instance), AWS
+    Cloud9 instances work well too. I created mine with an Elastic IP just to
+    keep my client ssh config static.
+    - Update! This works with AL2 as well.
+02. Install the following packages:
+    ```
+    [ec2-user@host ~]$ sudo yum install git docker
+    ```
+03. Clone dot-files onto the dev server (ideally into the home directory):
+    ```
+    [ec2-user@host ~]$ git clone https://github.com/brandonsimpkins/dot-files
+    ```
+04. Install the dotfiles (note - this sets up a few things in the environment
+    that makes the next few steps work - e.g. prepending $HOME/bin to the
+    $PATH):
+    ```
+    [ec2-user@host ~]$ ~/dot-files/install.sh
+    ```
+05. Create a host entry in your workstation ~/.ssh/config file. This allows for
+    local port forwarding over 8000.
+    ```
+    Host bender
+      Hostname 18.207.62.105
+      User ec2-user
+      IdentityFile ~/.ssh/keys/bssimpk-dev.pem
+      LocalForward 8000 localhost:8000
 
-   ServerAliveInterval 120
-   ```
-6. Clone this repo:
-   ```
-   [ec2-user@host ~]$ git clone https://github.com/brandonsimpkins/tactical-edge-computing
-   ```
-7. Install Docker Compose
-   ```
-   [ec2-user@host ~]$ ~/tactical-edge-computing/dev-scripts/get-docker-compose.sh
-   ```
-8. Following the [Docker installation instructions for Amazon Linux](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html):
-   ```
-   [ec2-user@host ~]$ sudo service docker start
-   [ec2-user@host ~]$ sudo usermod -a -G docker ec2-user
-   ```
-9. Log out and log back in again for the usermod command to take effect.
-10. Verify you can run docker commands without typing sudo:
+    ServerAliveInterval 120
+    ```
+06. Clone this repo:
+    ```
+    [ec2-user@host ~]$ git clone https://github.com/brandonsimpkins/tactical-edge-computing
+    ```
+07. Install Docker Compose
+    ```
+    [ec2-user@host ~]$ ~/tactical-edge-computing/dev-scripts/get-docker-compose.sh
+    ```
+08. Following the [Docker installation instructions for Amazon Linux](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/docker-basics.html):
+    ```
+    [ec2-user@host ~]$ sudo service docker start
+    [ec2-user@host ~]$ sudo usermod -a -G docker ec2-user
+    ```
+09. Enable the docker service on startup:
+    - For Amazon Linux 1:
+      ```
+      [ec2-user@host ~]$ sudo chkconfig docker on
+      ```
+    - For Amazon Linux 2:
+      ```
+      [ec2-user@host ~]$ sudo systemctl enable docker.service
+      ```
+10. Log out and log back in again for the usermod command to take effect.
+11. Verify you can run docker commands without typing sudo:
     ```
     docker info
     ```
-11. Change into the tactical computing directory and start the local apps!
+12. Change into the tactical computing directory and start the local apps!
     ```
     [ec2-user@host ~]$ cd tactical-edge-computing/src/
     [ec2-user@host src]$ docker-compose up
@@ -58,7 +67,20 @@
     if the database is up, so you the first time you run the docker-compose up
     command the app will fail to connect to the database since it has to create
     the database file system and create the ddl.
-
+13. Turn your cattle into a pet! [Set the hostname for your AL1 / AL2  server](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/set-hostname.html)
+    - For Amazon Linux 1:
+      ```
+      [ec2-user@host ~]$ sudo vim /etc/sysconfig/network
+      ```
+      Set the `HOSTNAME` variable to what you want your hostname to be, like so:
+      ```
+      HOSTNAME=bender.dev.simpkins.cloud
+      ```
+    - For Amazon Linux 2
+      ```
+      [ec2-user@host ~]$ sudo hostnamectl set-hostname ${HOSTNAME}
+      ```
+    Reboot for the hostname change to take effect.
 
 ## TODO
 - Create reverse proxy and x509 auth for django app
@@ -79,6 +101,8 @@
   - https://aws.amazon.com/blogs/compute/nginx-reverse-proxy-sidecar-container-on-amazon-ecs/
 - Native django integration with external auth:
   - https://docs.djangoproject.com/en/dev/howto/auth-remote-user/
+- Great GitHub README Markdown Cheat Sheet!
+  - https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 
 ## AWS CLI command references:
 - Recursive copy into S3
