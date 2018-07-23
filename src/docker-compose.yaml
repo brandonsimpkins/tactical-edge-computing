@@ -28,10 +28,8 @@ services:
       args:
         - buildnumber
         - gitcommithash
-    entrypoint: /bin/sh
-    command: ./fd_supply_services/start-web-container.sh
     volumes:
-      - .:/opt/fd-supply-services
+     - ./fd_supply_services:/opt/fd-supply-services
     ports:
       - "80:80"
     depends_on:
