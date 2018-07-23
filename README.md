@@ -81,6 +81,20 @@
       [ec2-user@host ~]$ sudo hostnamectl set-hostname ${HOSTNAME}
       ```
     Reboot for the hostname change to take effect.
+14. Unbelievable!!!!!!!  Python 3 package for AL 2 is Python 3.7rc1 !!!
+
+    Currently they cdont have additional packages for other 3.x versions of
+    python, ypou will need to install/enable the rhel/centos epel repos. See:
+    - https://forums.aws.amazon.com/thread.jspa?threadID=270511
+    - https://forums.aws.amazon.com/thread.jspa?threadID=278193
+
+     Unreal - might just want to go back to AL1
+
+    [ec2-user@farnsworth src]$ sudo yum install python-virtualenv
+    [ec2-user@farnsworth src]$ sudo yum install python3-devel
+
+
+
 
 ## TODO
 - Create reverse proxy and x509 auth for django app
