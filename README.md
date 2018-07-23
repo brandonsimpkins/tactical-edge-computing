@@ -119,9 +119,14 @@
 - Great GitHub README Markdown Cheat Sheet!
   - https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 
-## AWS CLI command references:
+## AWS CLI Command Reference:
 - Recursive copy into S3
-  ```
-  [ec2-user@bender dev-scripts]$ aws s3 cp ca-archive/ s3://isengard-tactical-edge-computing-dev-bucket/ca-archive --recursive
+  ```bash
+  [ec2-user@host ~]$ aws s3 cp ca-archive/ s3://isengard-tactical-edge-computing-dev-bucket/ca-archive --recursive
   ```
 
+## Git CLI Command Reference:
+- Cache GitHub credentials locally:
+  ```bash
+  git config credential.helper store
+  ```
