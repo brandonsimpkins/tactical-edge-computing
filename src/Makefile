@@ -3,9 +3,9 @@ requirements.txt:
 	pip freeze > requirements.txt
 
 virtualenv:
-	rm -rf ~/dev-env
-	virtualenv --python=python3.6 ~/dev-env; \
-	source ~/dev-env/bin/activate; \
+	rm -rf ~/python-3.6-dev-env
+	virtualenv --python=python3.5 ~/python-3.6-dev-env; \
+	source ~/python-3.6-dev-env/bin/activate; \
 	pip install -r fd_supply_services/requirements.txt
 
 flake8:
