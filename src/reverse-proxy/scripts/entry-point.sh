@@ -48,6 +48,18 @@ private_hash=$(echo $public_modulus | openssl md5 | cut -d' ' -f2)
 echo "Hashed modulus of private key: ${public_hash}"
 echo
 
+echo "Public Certificate Information:"
+openssl x509 -noout -in /etc/nginx/certs/server.crt -issuer -subject -dates | \
+  sed 's/^/  /g'
+echo
+
+echo "Subject Alternate Name DNS Entries:"
+openssl x509 -noout -in /etc/nginx/certs/server.crt -text | \
+  grep 'DNS' | \
+  tr ',' '\n' | \
+  sed 's/^\s*/  /g'
+echo
+
 # Start up nginx, save PID so we can reload config inside of run_certbot.sh
 echo "Starting Nginx"
 nginx -g "daemon off;"
