@@ -20,12 +20,12 @@ DEPLOYMENT_TYPE = os.environ["DEPLOYMENT_TYPE"]
 print("\nDetected {0} Deployment Type\n".format(DEPLOYMENT_TYPE))
 
 if DEPLOYMENT_TYPE == "DEV-LOCAL":
-    print("Loading LOCAL-DEV Settings")
+    print("Loading DEV-LOCAL Settings")
     with open(os.path.join(BASE_DIR, "config-dev-local.yaml"), 'r') as stream:
         settings = yaml.load(stream)
 
 elif DEPLOYMENT_TYPE == "DEV-REMOTE":
-    print("Loading REMOTE-DEV Settings")
+    print("Loading DEV-REMOTE Settings")
     with open(os.path.join(BASE_DIR, "config-dev-remote.yaml"), 'r') as stream:
         settings = yaml.load(stream)
 
