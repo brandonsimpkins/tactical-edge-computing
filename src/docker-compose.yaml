@@ -40,13 +40,20 @@ services:
           - supply-rest-service.internal.com
 
   fd-reverse-proxy:
+    hostname: $HOSTNAME
     image: fd-reverse-proxy
+    environment:
+      - DEPLOYMENT_TYPE=DEV-LOCAL
+      # - DEPLOYMENT_TYPE=DEV-REMOTE
+      # - DEPLOYMENT_TYPE=PRODUCTION
     build:
       context: ./reverse-proxy
       dockerfile: Dockerfile
       args:
         - buildnumber
         - gitcommithash
+    volumes:
+     - ./reverse-proxy:/opt/reverse-proxy
     ports:
       - "443:443"
     depends_on:
