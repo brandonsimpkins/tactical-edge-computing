@@ -93,15 +93,18 @@
     [ec2-user@host ~]$ make virtualenv
     [ec2-user@host ~]$ source ~/python-3.6-dev-env/bin/activate
     ```
-
-
-
+16. Set the git commiter info:
+    ```bash
+    [ec2-user@host ~]$ git commit --amend --reset-author
+    ```
 
 ## TODO
 - Create reverse proxy and x509 auth for django app
 - Create container for processing backups / upload to s3?
 - Fix generated certs to include subject alt names for chrome security checks
   - https://www.techrepublic.com/article/how-to-resolve-ssl-certificate-warnings-produced-by-the-latest-chrome-update/
+- Create mechanism to securely pull certs from S3 on docker image build or
+  container start.
 
 ## Notes / Links
 - This looks like the real deal, setting up a nginx reverse proxy and
