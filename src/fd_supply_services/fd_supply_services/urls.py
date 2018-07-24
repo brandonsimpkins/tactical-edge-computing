@@ -17,8 +17,8 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^api-auth/', include('rest_framework.urls')),
-    url(r'^item-service/', include('item_service.urls')),
-    url(r'^health-check/', include('health_check.urls')),
+    url(r'^supply/admin/', admin.site.urls),
+    url(r'^supply/api-auth/', include('rest_framework.urls')),
+    url(r'^supply/item-service/', include('item_service.urls')),
+    url(r'^supply/health-check/', include('health_check.urls')),
 ]
