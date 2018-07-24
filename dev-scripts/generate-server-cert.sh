@@ -228,14 +228,19 @@ echo
 echo "Created the server certificate: ${server_subject}"
 echo
 echo "The following server certs, keys, and password files have been created:"
-ls -lA ${cert_directory}/*
+ls -lA ${cert_directory}/* | sed 's/^/  /g'
 echo
 
 echo "Public Certificate Information:"
-openssl x509 -noout -in ${server_public_cert} -issuer -subject -dates
+openssl x509 -noout -in ${server_public_cert} -issuer -subject -dates | \
+  sed 's/^/  /g'
 echo
 
 echo "Subject Alternate Name DNS Entries:"
-openssl x509 -noout -in ${server_public_cert} -text | grep 'DNS'
+openssl x509 -noout -in ${server_public_cert} -text | \
+  grep 'DNS' | \
+  tr ',' '\n' | \
+  sed 's/^\s*/  /g'
+
 echo
 
