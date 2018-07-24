@@ -145,6 +145,16 @@ openssl x509 -req -in ${server_public_cert_csr} \
   -out "${server_public_cert}" \
   -CA "${ca_public_cert}" \
   -CAkey "${ca_private_key}" \
+  -extfile <(echo "
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = www.${server_cn}
+DNS.2 = ${server_cn}
+") \
   -passin pass:${ca_password} \
   -set_serial "0x$(openssl rand -hex 16)" \
   -days $cert_days &>$output_file
@@ -220,3 +230,12 @@ echo
 echo "The following server certs, keys, and password files have been created:"
 ls -lA ${cert_directory}/*
 echo
+
+echo "Public Certificate Information:"
+openssl x509 -noout -in ${server_public_cert} -issuer -subject -dates
+echo
+
+echo "Subject Alternate Name DNS Entries:"
+openssl x509 -noout -in ${server_public_cert} -text | grep 'DNS'
+echo
+
