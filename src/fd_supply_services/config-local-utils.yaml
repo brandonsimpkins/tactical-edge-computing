@@ -1,0 +1,6 @@
+
+debug: False
+
+collect-static:
+  root: "../reverse-proxy/static-html/django-static"
+

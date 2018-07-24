@@ -16,9 +16,19 @@ import yaml
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DEPLOYMENT_TYPE = os.environ["DEPLOYMENT_TYPE"]
-print("\nDetected {0} Deployment Type\n".format(DEPLOYMENT_TYPE))
+# read the deployment type fron the env variables
+try:
+    DEPLOYMENT_TYPE = os.environ["DEPLOYMENT_TYPE"]
+    print("\nDetected {0} Deployment Type\n".format(DEPLOYMENT_TYPE))
 
+except KeyError:
+
+    # If deployment type is not set, default to local tool settings. this
+    # should make it easier to directly invoke manage.py commands.
+    DEPLOYMENT_TYPE = "LOCAL-UTILS"
+    print("Deployment Type not set! Defaulting to {0}!".format(DEPLOYMENT_TYPE))
+
+# Load environment specific settings
 if DEPLOYMENT_TYPE == "DEV-LOCAL":
     print("Loading DEV-LOCAL Settings")
     with open(os.path.join(BASE_DIR, "config-dev-local.yaml"), 'r') as stream:
@@ -40,6 +50,11 @@ elif DEPLOYMENT_TYPE == "PRODUCTION":
     settings['database']['user'] = os.environ['DB_USER']
     settings['database']['password'] = os.environ['DB_PASSWORD']
     settings['database']['host'] = os.environ['DB_HOST']
+
+elif DEPLOYMENT_TYPE == "LOCAL-UTILS":
+    print("Loading LOCAL-UTILS Settings")
+    with open(os.path.join(BASE_DIR, "config-local-utils.yaml"), 'r') as stream:
+        settings = yaml.load(stream)
 
 else:
     print("ERROR: Failed to load {0} settings!".format(DEPLOYMENT_TYPE))
@@ -129,16 +144,17 @@ REST_FRAMEWORK = {
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE':   settings["database"]["engine"],
-        'NAME':     settings["database"]["name"],
-        'USER':     settings["database"]["user"],
-        'PASSWORD': settings["database"]["password"],
-        'HOST':     settings["database"]["host"],
-        'PORT':     settings["database"]["port"],
+if 'database' in settings:
+    DATABASES = {
+        'default': {
+            'ENGINE':   settings["database"]["engine"],
+            'NAME':     settings["database"]["name"],
+            'USER':     settings["database"]["user"],
+            'PASSWORD': settings["database"]["password"],
+            'HOST':     settings["database"]["host"],
+            'PORT':     settings["database"]["port"],
+        }
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -176,4 +192,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/django-static/'
+
+# Process static file collection settings
+if 'collect-static' in settings:
+    STATIC_ROOT = os.path.join(BASE_DIR, settings["collect-static"]["root"])
+

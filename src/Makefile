@@ -24,3 +24,8 @@ docker-clean:
 
 delete-postgres:
 	-docker volume rm `docker volume ls | awk '{print $2}' | grep 'postgres'`
+
+collect-static:
+	source ~/python-3.6-dev-env/bin/activate; \
+	./fd_supply_services/manage.py collectstatic --noinput
+
