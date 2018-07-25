@@ -9,7 +9,7 @@ phases:
       - apt list --installed
       - apt-get update -y
       - python --version
-      - pip install flake8
+      - pip install -r src/flake8-requirements.txt
     finally:
       - echo "install stage finishing"
   pre_build:
