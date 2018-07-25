@@ -1,38 +1,98 @@
 
-requirements.txt:
-	pip freeze > requirements.txt
+.PHONY: all help django-env django-reqs django-root-files django-chown \
+		django-collect-static flake8 flake8-env flake8-reqs \
+		docker-clean docker-clean
 
-virtualenv:
-	# Unsetting PYTHON_INSTALL_LAYOUT is key for use with virtualenv!
-	# Amazon Linux sets the PYTHON_INSTALL_LAYOUT env variable to "amzn"
-	# which causes 'distutils' based install packages to get installed in
-	# {VENV}/lib64/python3.6/dist-packages instead of the proper
-	# {VENV}/lib64/python3.6/site-packages location.
-	rm -rf ~/python-3.6-dev-env
+SHELL = /bin/bash
+DJANGO_ENV = ~/python-3.6-django-env
+FLAKE8_ENV = ~/python-3.6-flake8-env
+
+all: help
+
+help:
+	@echo
+	@echo " Available Make Targets:"
+	@echo
+	@grep '^[^#[:space:]].*:' Makefile | grep -Ev '(.PHONY|all)' | \
+		sed 's/^/  > /g' | sed 's/:.*//g'
+	@echo
+
+django-env:
+	@# Unsetting PYTHON_INSTALL_LAYOUT is key for use with virtualenv!
+	@# Amazon Linux sets the PYTHON_INSTALL_LAYOUT env variable to "amzn"
+	@# which causes 'distutils' based install packages to get installed in
+	@# {ENV}/lib64/python3.6/dist-packages instead of the proper
+	@# {ENV}/lib64/python3.6/site-packages location.
+	@echo -e "\nCleaning the ${DJANGO_ENV} directory"
+	@echo "-----------------------------------------------------------"
+	rm -rf $(DJANGO_ENV)
+	@echo -e "\nCreating a new ${DJANGO_ENV} virtualenv"
+	@echo "-----------------------------------------------------------"
+	virtualenv --python=python3.6 $(DJANGO_ENV)
+	@echo -e "\nInstalling Python Packages:"
+	@echo "-----------------------------------------------------------"
 	unset PYTHON_INSTALL_LAYOUT && \
-	virtualenv --python=python3.6 ~/python-3.6-dev-env && \
-	source ~/python-3.6-dev-env/bin/activate && \
-	pip install -r fd_supply_services/requirements.txt && \
-	python -c 'import yaml'
+		source $(DJANGO_ENV)/bin/activate && \
+		pip install -r fd_supply_services/requirements.txt
+	@echo -e "\nTesting Python Installation"
+	@echo "-----------------------------------------------------------"
+	source $(DJANGO_ENV)/bin/activate && \
+		python -c 'import yaml' && \
+		echo -e "\n\nInstalled the following python packages:\n" && \
+		pip list && \
+		echo -e "\nSource the environment with:\n" && \
+		echo -e "  > source $(DJANGO_ENV)/bin/activate \n"
 
-flake8:
-	source ~/dev-env/bin/activate && flake8
+django-reqs:
+	pip freeze > fd_supply_services/requirements.txt
 
-find-unowned-files:
+django-root-files:
 	find . ! -user $(USER) -exec ls -lad {} \;
 
-chown: find-unowned-files
+django-chown: django-root-files
 	sudo chown $(USER):$(USER) -c -R .
+
+django-collect-static:
+	source $(DJANGO_ENV)/bin/activate &&
+		./fd_supply_services/manage.py collectstatic --noinput
+
+flake8:
+	source $(FLAKE8_ENV)/bin/activate && flake8
+
+flake8-env:
+	@# Unsetting PYTHON_INSTALL_LAYOUT is key for use with virtualenv!
+	@# Amazon Linux sets the PYTHON_INSTALL_LAYOUT env variable to "amzn"
+	@# which causes 'distutils' based install packages to get installed in
+	@# {ENV}/lib64/python3.6/dist-packages instead of the proper
+	@# {ENV}/lib64/python3.6/site-packages location.
+	@echo -e "\nCleaning the ${FLAKE8_ENV} directory"
+	@echo "-----------------------------------------------------------"
+	rm -rf $(FLAKE8_ENV)
+	@echo -e "\nCreating a new ${FLAKE8_ENV} virtualenv"
+	@echo "-----------------------------------------------------------"
+	virtualenv --python=python3.6 $(FLAKE8_ENV)
+	@echo -e "\nInstalling Python Packages:"
+	@echo "-----------------------------------------------------------"
+	unset PYTHON_INSTALL_LAYOUT && \
+		source $(FLAKE8_ENV)/bin/activate && \
+		pip install -r flake8-requirements.txt
+	@echo -e "\nTesting Python Installation"
+	@echo "-----------------------------------------------------------"
+	source $(FLAKE8_ENV)/bin/activate && \
+		python -c 'import flake8' && \
+		echo -e "\n\nInstalled the following python packages:\n" && \
+		pip list && \
+		echo -e "\nSource the environment with:\n" && \
+		echo -e "  > source $(FLAKE8_ENV)/bin/activate \n"
+
+flake8-reqs:
+	pip freeze > flake8-requirements.txt
 
 docker-clean:
 	docker container prune -f
 	-docker rmi `docker images --filter "dangling=true" -q --no-trunc`
 	-docker rmi `docker images | grep "none" | awk '/ / { print $3 }'`
 
-delete-postgres:
+docker-clean-postgres:
 	-docker volume rm `docker volume ls | awk '{print $2}' | grep 'postgres'`
-
-collect-static:
-	source ~/python-3.6-dev-env/bin/activate; \
-	./fd_supply_services/manage.py collectstatic --noinput
 
