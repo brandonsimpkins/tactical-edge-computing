@@ -17,6 +17,55 @@ problems:
 2. You can keep installing it over and over again.
 3. pyyaml doesn't show up in pip list or pip freeze
 
+
+pip install debug output with PYTHON_INSTALL_LAYOUT=amzn set
+
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/tokens.py to tokens.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/resolver.py to resolver.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/representer.py to representer.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/cyaml.py to cyaml.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/composer.py to composer.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/reader.py to reader.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/serializer.py to serializer.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/dumper.py to dumper.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/__init__.py to __init__.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/emitter.py to emitter.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/parser.py to parser.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/events.py to events.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/loader.py to loader.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/error.py to error.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/scanner.py to scanner.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/constructor.py to constructor.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/dist-packages/yaml/nodes.py to nodes.cpython-36.pyc
+
+
+
+pip install debug output with PYTHON_INSTALL_LAYOUT not set!
+
+
+    copying build/lib.linux-x86_64-3.6/yaml/events.py -> /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml
+    copying build/lib.linux-x86_64-3.6/yaml/loader.py -> /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml
+    copying build/lib.linux-x86_64-3.6/yaml/error.py -> /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml
+    copying build/lib.linux-x86_64-3.6/yaml/scanner.py -> /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml
+    copying build/lib.linux-x86_64-3.6/yaml/constructor.py -> /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml
+    copying build/lib.linux-x86_64-3.6/yaml/nodes.py -> /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/tokens.py to tokens.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/resolver.py to resolver.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/representer.py to representer.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/cyaml.py to cyaml.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/composer.py to composer.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/reader.py to reader.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/serializer.py to serializer.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/dumper.py to dumper.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/__init__.py to __init__.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/emitter.py to emitter.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/parser.py to parser.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/events.py to events.cpython-36.pyc
+    byte-compiling /home/ec2-user/python-3.6-dev-env/lib64/python3.6/site-packages/yaml/loader.py to loader.cpython-36.pyc
+
+
+
+
 This is caused by:
 
 1. python36-devel and  python36-virtualenv rpms require system-rpm-config
