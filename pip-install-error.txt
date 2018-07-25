@@ -1,0 +1,53 @@
+
+
+
+Steps to reproduce:
+
+
+1. Create a AL1 instance
+2. SSH into the server
+3. sudo yum install python36-virtualenv -y
+4. Logout / reboot?
+5. create a virtual env and source it
+6. pip install pyyaml
+
+problems:
+
+1. pyyaml install says it succeeds, when it really doesnt.
+2. You can keep installing it over and over again.
+3. pyyaml doesn't show up in pip list or pip freeze
+
+This is caused by:
+
+1. python36-devel and  python36-virtualenv rpms require system-rpm-config
+2. [ec2-user@farnsworth ~]$ rpm -ql system-rpm-config
+   /etc/profile.d/python-install-layout.csh
+   /etc/profile.d/python-install-layout.sh
+3. [ec2-user@farnsworth ~]$ cat /etc/profile.d/python-install-layout.csh
+   # Python Installation used for RPM packaging on Amazon Linux AMI.
+   # This is equivalent to passing '--install-layout=amzn' to setup.py
+   # during the 'install' step
+
+   setenv PYTHON_INSTALL_LAYOUT "amzn"
+
+4. Check env
+  [ec2-user@farnsworth ~]$ env | grep PYTHON_INSTALL_LAYOUT
+  PYTHON_INSTALL_LAYOUT=amzn
+5. the problem gets fixed when you run 'unset PYTHON_INSTALL_LAYOUT'
+
+
+Offending python code:
+
+/usr/lib64/python3.6/distutils/command/install.py
+
+ 48     'amzn_system': {
+ 49         'purelib': '$base/lib/python$py_version_short/dist-packages',
+ 50         'platlib': '$platbase/lib%s/python$py_version_short/dist-packages' % __64bits_arch,
+ 51         'headers': '$base/include/python$py_version_short/$dist_name',
+ 52         'scripts': '$base/bin',
+ 53         'data'   : '$base',
+ 54         },
+
+This appears to default installing packages into dist-utils which is where pyyaml was getting installed into
+
+
