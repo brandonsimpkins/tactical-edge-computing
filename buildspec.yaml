@@ -52,6 +52,7 @@ phases:
       - echo "post_build stage finishing"
       - echo "Writing image definitions file..."
       - printf '[{"name":"%s","imageUri":"%s"}]' $REST_IMAGE $REST_REPO_URI > ${REST_IMAGE}-definitions.json
+      - printf '[{"name":"%s","imageUri":"%s"}]' $PROXY_IMAGE $PROXY_REPO_URI > ${PROXY_IMAGE}-definitions.json
 
 artifacts:
   files:
