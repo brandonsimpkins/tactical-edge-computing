@@ -19,7 +19,7 @@ phases:
       - apt-get update -y
       - echo "searching for python packages"
       # - apt-cache search python
-      - apt-get install -f python3.4-dev python3.4-venv
+      - apt-get install -f python3.4-dev python3.4-venv -y
       - REST_REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REST_IMAGE
       - PROXY_REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$PROXY_IMAGE
     finally:
