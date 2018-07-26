@@ -4,8 +4,9 @@
 		docker-clean docker-clean
 
 SHELL = /bin/bash
-DJANGO_ENV = ~/python-3.6-django-env
-FLAKE8_ENV = ~/python-3.6-flake8-env
+PYTHON_VERSION ?= 3.6
+DJANGO_ENV = ~/python-$(PYTHON_VERSION)-django-env
+FLAKE8_ENV = ~/python-$(PYTHON_VERSION)-flake8-env
 
 all: help
 
@@ -23,12 +24,13 @@ django-env:
 	@# which causes 'distutils' based install packages to get installed in
 	@# {ENV}/lib64/python3.6/dist-packages instead of the proper
 	@# {ENV}/lib64/python3.6/site-packages location.
+	@echo -e "\nCreating a Python $(PYTHON_VERSION) Environment!"
 	@echo -e "\nCleaning the ${DJANGO_ENV} directory"
 	@echo "-----------------------------------------------------------"
 	rm -rf $(DJANGO_ENV)
 	@echo -e "\nCreating a new ${DJANGO_ENV} virtualenv"
 	@echo "-----------------------------------------------------------"
-	virtualenv --python=python3.6 $(DJANGO_ENV)
+	virtualenv --python=python$(PYTHON_VERSION) $(DJANGO_ENV)
 	@echo -e "\nInstalling Python Packages:"
 	@echo "-----------------------------------------------------------"
 	unset PYTHON_INSTALL_LAYOUT && \
@@ -65,12 +67,13 @@ flake8-env:
 	@# which causes 'distutils' based install packages to get installed in
 	@# {ENV}/lib64/python3.6/dist-packages instead of the proper
 	@# {ENV}/lib64/python3.6/site-packages location.
+	@echo -e "\nCreating a Python $(PYTHON_VERSION) Environment!"
 	@echo -e "\nCleaning the ${FLAKE8_ENV} directory"
 	@echo "-----------------------------------------------------------"
 	rm -rf $(FLAKE8_ENV)
 	@echo -e "\nCreating a new ${FLAKE8_ENV} virtualenv"
 	@echo "-----------------------------------------------------------"
-	virtualenv --python=python3.6 $(FLAKE8_ENV)
+	virtualenv --python=python$(PYTHON_VERSION) $(FLAKE8_ENV)
 	@echo -e "\nInstalling Python Packages:"
 	@echo "-----------------------------------------------------------"
 	unset PYTHON_INSTALL_LAYOUT && \
