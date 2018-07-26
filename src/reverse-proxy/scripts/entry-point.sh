@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# global variables
+NGINX_PRIVATE_KEY=/etc/nginx/certs/private-key.pem
+NGINX_PUBLIC_CERT=/etc/nginx/certs/public-cert.pem
+
 # check to see if the DEBUG variable is set
 if [ "$DEBUG" ]; then
   echo
@@ -25,8 +29,8 @@ if [ "$DEPLOYMENT_TYPE" == "DEV-LOCAL" ]; then
 
   # install the correct certs
   echo "Copying $(hostname -f) certificates"
-  cp /opt/reverse-proxy/server-certs/$(hostname -f)-*/server-private-key.pem /etc/nginx/certs/server.key
-  cp /opt/reverse-proxy/server-certs/$(hostname -f)-*/server-public-cert.pem /etc/nginx/certs/server.crt
+  cp /opt/reverse-proxy/server-certs/$(hostname -f)-*/server-private-key.pem $NGINX_PRIVATE_KEY
+  cp /opt/reverse-proxy/server-certs/$(hostname -f)-*/server-public-cert.pem $NGINX_PUBLIC_CERT
   echo
 
   # set hostnames
@@ -52,27 +56,28 @@ sed -i "s/\[SUPPLY_SERVICE_FQDN\]/$SUPPLY_SERVICE_FQDN/g" /etc/nginx/nginx.conf
 # verify cert info
 echo "Displaying Certificate Information:"
 echo
-ls -la /etc/nginx/certs/server*
+ls -la $NGINX_PRIVATE_KEY
+ls -la $NGINX_PUBLIC_CERT
 echo
 
 # compute public cert hash
-public_modulus=$(openssl x509 -in /etc/nginx/certs/server.crt -modulus -noout)
+public_modulus=$(openssl x509 -in $NGINX_PUBLIC_CERT -modulus -noout)
 public_hash=$(echo $public_modulus | openssl md5 | cut -d' ' -f2)
 echo "Hashed modulus of public cert: ${public_hash}"
 
 # compute private key hash
-private_modulus=$(openssl rsa -in /etc/nginx/certs/server.key -modulus -noout)
+private_modulus=$(openssl rsa -in $NGINX_PUBLIC_CERT -modulus -noout)
 private_hash=$(echo $public_modulus | openssl md5 | cut -d' ' -f2)
 echo "Hashed modulus of private key: ${public_hash}"
 echo
 
 echo "Public Certificate Information:"
-openssl x509 -noout -in /etc/nginx/certs/server.crt -issuer -subject -dates | \
+openssl x509 -noout -in $NGINX_PUBLIC_CERT -issuer -subject -dates | \
   sed 's/^/  /g'
 echo
 
 echo "Subject Alternate Name DNS Entries:"
-openssl x509 -noout -in /etc/nginx/certs/server.crt -text | \
+openssl x509 -noout -in $NGINX_PUBLIC_CERT -text | \
   grep 'DNS' | \
   tr ',' '\n' | \
   sed 's/^\s*/  /g'
