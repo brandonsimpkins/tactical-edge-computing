@@ -17,6 +17,8 @@ phases:
       - which apt
       - apt list --installed
       - apt-get update -y
+      - echo "searching for python packages"
+      - apt-get search python
       - apt-get install python3.6
       - REST_REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REST_IMAGE
       - PROXY_REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$PROXY_IMAGE
