@@ -18,8 +18,8 @@ phases:
       - apt list --installed
       - apt-get update -y
       - echo "searching for python packages"
-      - apt-cache search python
-      - apt-get install -f python3.5-venv
+      # - apt-cache search python
+      - apt-get install -f python3.4-dev python3.4-venv
       - REST_REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REST_IMAGE
       - PROXY_REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$PROXY_IMAGE
     finally:
@@ -33,9 +33,9 @@ phases:
       - echo "Logging in to Amazon ECR..."
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
       - echo "Creating python 3.6 virtualenv"
-      - cd src; make django-env PYTHON_VERSION=3.5
+      - cd src; make django-env PYTHON_VERSION=3.4
       - echo "collecting Django Static Resources for the Nginx Proxy"
-      - cd src; make django-collect-static PYTHON_VERSION=3.5
+      - cd src; make django-collect-static PYTHON_VERSION=3.4
     finally:
       - echo "pre_build stage finishing"
 
