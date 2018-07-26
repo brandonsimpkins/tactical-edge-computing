@@ -33,9 +33,13 @@ phases:
       - echo "Logging in to Amazon ECR..."
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
       - echo "Creating python 3.6 virtualenv"
-      - cd src; make django-env PYTHON_VERSION=3.4
+      - cd src
+      - make django-env PYTHON_VERSION=3.4
       - echo "collecting Django Static Resources for the Nginx Proxy"
       - pwd
+      - ls -la
+      - ls -la fd_supply_services
+      - chmod 700 fd_supply_services\manage.py
       - make django-collect-static PYTHON_VERSION=3.4
     finally:
       - echo "pre_build stage finishing"
