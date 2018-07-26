@@ -76,7 +76,7 @@ sed -i "s/\[REVERSE_PROXY_FQDN\]/$REVERSE_PROXY_FQDN/g" /etc/nginx/nginx.conf
 sed -i "s/\[SUPPLY_SERVICE_FQDN\]/$SUPPLY_SERVICE_FQDN/g" /etc/nginx/nginx.conf
 
 # verify cert info
-echo "Displaying Certificate Information:"
+echo "Displaying Certificate/Key Pair Information:"
 echo
 ls -la $NGINX_PRIVATE_KEY
 ls -la $NGINX_PUBLIC_CERT
@@ -88,7 +88,7 @@ public_hash=$(echo $public_modulus | openssl md5 | cut -d' ' -f2)
 echo "Hashed modulus of public cert: ${public_hash}"
 
 # compute private key hash
-private_modulus=$(openssl rsa -in $NGINX_PUBLIC_CERT -modulus -noout)
+private_modulus=$(openssl rsa -in $NGINX_PRIVATE_KEY -modulus -noout)
 private_hash=$(echo $public_modulus | openssl md5 | cut -d' ' -f2)
 echo "Hashed modulus of private key: ${public_hash}"
 echo
