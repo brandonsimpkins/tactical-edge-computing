@@ -8,6 +8,7 @@ env:
     PROXY_TAG:   "latest"
 
 phases:
+
   install:
     commands:
       - echo "install stage beginning"
@@ -16,11 +17,12 @@ phases:
       - which apt
       - apt list --installed
       - apt-get update -y
+      - apt-get install python3.6
       - REST_REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REST_IMAGE
       - PROXY_REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$PROXY_IMAGE
-
     finally:
       - echo "install stage finishing"
+
   pre_build:
     commands:
       - echo "pre_build stage beginning"
@@ -28,8 +30,13 @@ phases:
       - docker container list -a
       - echo "Logging in to Amazon ECR..."
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - echo "Creating python 3.6 virtualenv"
+      - cd src; make django-env
+      - echo "collecting Django Static Resources for the Nginx Proxy"
+      - cd src; make django-collect-static
     finally:
       - echo "pre_build stage finishing"
+
   build:
     commands:
       - echo "build stage beginning"
@@ -41,6 +48,7 @@ phases:
       - echo "build stage finishing"
       - docker images
       - docker container list --all
+
   post_build:
     commands:
       - echo "post_build stage beginning"
