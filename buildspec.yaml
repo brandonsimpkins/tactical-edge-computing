@@ -41,6 +41,7 @@ phases:
       - ls -la fd_supply_services
       - chmod 700 fd_supply_services/manage.py
       - make django-collect-static PYTHON_VERSION=3.4
+      - cd ..
     finally:
       - echo "pre_build stage finishing"
 
