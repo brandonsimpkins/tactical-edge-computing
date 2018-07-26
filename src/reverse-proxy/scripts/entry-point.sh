@@ -28,12 +28,30 @@ if [ "$DEPLOYMENT_TYPE" == "DEV-LOCAL" ]; then
   cp /opt/reverse-proxy/server-certs/$(hostname -f)-*/server-private-key.pem /etc/nginx/certs/server.key
   cp /opt/reverse-proxy/server-certs/$(hostname -f)-*/server-public-cert.pem /etc/nginx/certs/server.crt
   echo
+
+  # set hostnames
+  REVERSE_PROXY_FQDN="$(hostname -f)"
+  SUPPLY_SERVICE_FQDN="supply-rest-service.internal.com"
+
 else
   echo "ERROR: Failed to load $DEPLOYMENT_TYPE settings!"
   exit 2
 fi
 
+# copy and process the /etc/nginx/nginx.conf template
+echo "Nginx Dynamic Environment Configuration Settings"
+echo
+echo "REVERSE_PROXY_FQDN: $REVERSE_PROXY_FQDN"
+echo "SUPPLY_SERVICE_FQDN: $SUPPLY_SERVICE_FQDN"
+echo
+
+cp /opt/reverse-proxy/config-templates/nginx.conf /etc/nginx/nginx.conf
+sed -i "s/\[REVERSE_PROXY_FQDN\]/$REVERSE_PROXY_FQDN/g" /etc/nginx/nginx.conf
+sed -i "s/\[SUPPLY_SERVICE_FQDN\]/$SUPPLY_SERVICE_FQDN/g" /etc/nginx/nginx.conf
+
 # verify cert info
+echo "Displaying Certificate Information:"
+echo
 ls -la /etc/nginx/certs/server*
 echo
 
