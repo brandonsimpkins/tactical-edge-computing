@@ -55,6 +55,7 @@ django-chown: django-root-files
 	sudo chown $(USER):$(USER) -c -R .
 
 django-collect-static:
+	chmod +x fd_supply_services/manage.py
 	source $(DJANGO_ENV)/bin/activate && \
 		./fd_supply_services/manage.py collectstatic --noinput
 

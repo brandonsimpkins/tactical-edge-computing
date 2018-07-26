@@ -14,11 +14,8 @@ phases:
       - echo "install stage beginning"
       - env | sort
       - test "$AWS_ACCOUNT_ID" || { echo 'AWS_ACCOUNT_ID env variable not set!'; exit 1; }
-      - which apt
       - apt list --installed
       - apt-get update -y
-      - echo "searching for python packages"
-      # - apt-cache search python
       - apt-get install -f python3.4-dev python3.4-venv python-virtualenv -y
       - REST_REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REST_IMAGE
       - PROXY_REPO_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$PROXY_IMAGE
@@ -32,16 +29,13 @@ phases:
       - docker container list -a
       - echo "Logging in to Amazon ECR..."
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-      - echo "Creating python 3.6 virtualenv"
-      - cd src
-      - make django-env PYTHON_VERSION=3.4
-      - echo "collecting Django Static Resources for the Nginx Proxy"
+      - echo "Listing current directory info"
       - pwd
       - ls -la
-      - ls -la fd_supply_services
-      - chmod 700 fd_supply_services/manage.py
-      - make django-collect-static PYTHON_VERSION=3.4
-      - cd ..
+      - echo "Creating python 3.6 virtualenv"
+      - (cd src && make django-env PYTHON_VERSION=3.4)
+      - echo "collecting Django Static Resources for the Nginx Proxy"
+      - (cd src && make django-collect-static PYTHON_VERSION=3.4
     finally:
       - echo "pre_build stage finishing"
 
@@ -75,6 +69,7 @@ artifacts:
     - ${REST_IMAGE}-${REST_TAG}.tar
     - ${PROXY_IMAGE}-${PROXY_TAG}.tar
     - ${REST_IMAGE}-definitions.json
+    - ${PROXY_IMAGE}-definitions.json
   discard-paths: yes
   base-directory: .
 
