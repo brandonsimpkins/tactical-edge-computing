@@ -23,7 +23,9 @@ else
 fi
 
 # configure based on different deployment types
-if [ "$DEPLOYMENT_TYPE" == "DEV-LOCAL" ]; then
+if [ "$DEPLOYMENT_TYPE" == "DEV-LOCAL" ] || \
+   [ "$DEPLOYMENT_TYPE" == "DEV-REMOTE" ]; then
+
   echo "Loading DEV-LOCAL Settings"
   echo
 
@@ -36,6 +38,26 @@ if [ "$DEPLOYMENT_TYPE" == "DEV-LOCAL" ]; then
   # set hostnames
   REVERSE_PROXY_FQDN="$(hostname -f)"
   SUPPLY_SERVICE_FQDN="supply-rest-service.internal.com"
+
+elif [ "$DEPLOYMENT_TYPE" == "PRODUCTION" ]; then
+
+  # REVERSE_PROXY_FQDN and SUPPLY_SERVICE_FQDN are set by the ECS cluster
+
+  if [ -z "$REVERSE_PROXY_FQDN" ]; then
+    echo "REVERSE_PROXY_FQDN env variable is not set!"
+    exit 3
+  fi
+
+  if [ -z "$SUPPLY_SERVICE_FQDN" ]; then
+    echo "SUPPLY_SERVICE_FQDN env variable is not set!"
+    exit 4
+  fi
+
+  # install the correct certs
+  echo "Copying $REVERSE_PROXY_FQDN certificates"
+  cp /opt/reverse-proxy/server-certs/$REVERSE_PROXY_FQDN-*/server-private-key.pem $NGINX_PRIVATE_KEY
+  cp /opt/reverse-proxy/server-certs/$REVERSE_PROXY_FQDN-*/server-public-cert.pem $NGINX_PUBLIC_CERT
+  echo
 
 else
   echo "ERROR: Failed to load $DEPLOYMENT_TYPE settings!"
