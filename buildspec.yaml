@@ -35,7 +35,7 @@ phases:
       - echo "Creating python 3.6 virtualenv"
       - (cd src && make django-env PYTHON_VERSION=3.4)
       - echo "collecting Django Static Resources for the Nginx Proxy"
-      - (cd src && make django-collect-static PYTHON_VERSION=3.4
+      - (cd src && make django-collect-static PYTHON_VERSION=3.4)
     finally:
       - echo "pre_build stage finishing"
 
