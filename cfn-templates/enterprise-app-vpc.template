@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >-
+  Creates a standalone application vpc and deploys a sample web application
+  with reverse proxy, ELBs, RDS, and other resources required for application
+  development, testing, and deployment.
+
+Metadata:
+  Stack:
+    Value: 3
+  VersionDate:
+    Value: 20180726
+  Identifier:
+    Value: template-application
+  Input:
+    Description: >-
+      All your input are belong to me.
+  Output:
+    Description: Outputs ID of all deployed resources
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Region Config
+        Parameters:
+          - pEC2KeyPair
+          - pAvailabilityZone1
+          - pAvailabilityZone2
+          - pDeploymentType
+      - Label:
+          default: Network (new VPC config)
+        Parameters:
+          - pVPCCidrRange
+          - pPublicSubnetCidrRange1
+          - pPublicSubnetCidrRange2
+          - pPrivateSubnetCidrRange1
+          - pPrivateSubnetCidrRange2
+
+Parameters:
+
+  pEC2KeyPair:
+    Description: Name of EC2 key pair used to log into instances.
+    Type: String
+    Default: 'bssimpk-dev'
+
+  pAvailabilityZone1:
+    Description: 'Availability Zone #1'
+    Type: 'AWS::EC2::AvailabilityZone::Name'
+    Default: 'us-east-1a'
+
+  pAvailabilityZone2:
+    Description: 'Availability Zone #2'
+    Type: 'AWS::EC2::AvailabilityZone::Name'
+    Default: 'us-east-1b'
+
+  pVPCCidrRange:
+    Description: 'CIDR Block Range for the application VPC'
+    Type: String
+    Default: '10.200.0.0/16'
+
+  pPublicSubnetCidrRange1:
+    Description: 'CIDR Block Range for Public Subnet 1'
+    Type: String
+    Default: '10.200.100.0/24'
+
+  pPublicSubnetCidrRange2:
+    Description: 'CIDR Block Range for Public Subnet 2'
+    Type: String
+    Default: '10.200.102.0/24'
+
+  pPrivateSubnetCidrRange1:
+    Description: 'CIDR Block Range for Private Subnet 1'
+    Type: String
+    Default: '10.200.200.0/24'
+
+  pPrivateSubnetCidrRange2:
+    Description: CIDR Block Range for Private Subnet 2
+    Type: String
+    Default: '10.200.202.0/24'
+
+  pDeploymentType:
+    Description: Deployment Type
+    Type: String
+    Default: 'DEVELOPMENT'
+    AllowedValues:
+      - 'DEVELOPMENT'
+      - 'TEST'
+      - 'PRODUCTION'
+
+Resources:
+
+  rVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: { Ref: pVPCCidrRange }
+      Tags:
+        - Key: Name
+          Value: { Ref: 'AWS::StackName' }
+
+  rPublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: { Ref: pAvailabilityZone1 }
+      CidrBlock: { Ref: pPublicSubnetCidrRange1 }
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: { Ref: 'AWS::StackName' }
+      VpcId: { Ref: rVPC }
+
