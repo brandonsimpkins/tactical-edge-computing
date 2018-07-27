@@ -176,6 +176,18 @@ Resources:
       GatewayId: { Ref: rInternetGateway }
       RouteTableId: { Ref: rPublicRouteTable }
 
+  rPublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref rPublicSubnet1
+      RouteTableId: !Ref rPublicRouteTable
+
+  rPublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref rPublicSubnet2
+      RouteTableId: !Ref rPublicRouteTable
+
   rNatGatewayElasticIP:
     Type: AWS::EC2::EIP
     Properties:
@@ -205,6 +217,18 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: { Ref: rNatGateway }
       RouteTableId: { Ref: rPrivateRouteTable }
+
+  rPrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref rPrivateSubnet1
+      RouteTableId: !Ref rPrivateRouteTable
+
+  rPrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref rPrivateSubnet2
+      RouteTableId: !Ref rPrivateRouteTable
 
   #
   # Network - Security Groups
