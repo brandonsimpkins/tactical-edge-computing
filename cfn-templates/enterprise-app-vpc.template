@@ -88,6 +88,10 @@ Parameters:
 
 Resources:
 
+  #
+  # VPC and Subnet Resources
+  #
+
   rVPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -102,8 +106,103 @@ Resources:
       AvailabilityZone: { Ref: pAvailabilityZone1 }
       CidrBlock: { Ref: pPublicSubnetCidrRange1 }
       MapPublicIpOnLaunch: true
+      VpcId: { Ref: rVPC }
       Tags:
         - Key: Name
           Value: { Ref: 'AWS::StackName' }
+
+  rPublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: { Ref: pAvailabilityZone2 }
+      CidrBlock: { Ref: pPublicSubnetCidrRange2 }
+      MapPublicIpOnLaunch: true
       VpcId: { Ref: rVPC }
+      Tags:
+        - Key: Name
+          Value: { Ref: 'AWS::StackName' }
+
+  rPrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: { Ref: pAvailabilityZone1 }
+      CidrBlock: { Ref: pPrivateSubnetCidrRange1 }
+      MapPublicIpOnLaunch: false
+      VpcId: { Ref: rVPC }
+      Tags:
+        - Key: Name
+          Value: { Ref: 'AWS::StackName' }
+
+  rPrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: { Ref: pAvailabilityZone2 }
+      CidrBlock: { Ref: pPrivateSubnetCidrRange2 }
+      MapPublicIpOnLaunch: false
+      VpcId: { Ref: rVPC }
+      Tags:
+        - Key: Name
+          Value: { Ref: 'AWS::StackName' }
+
+  #
+  # Network Routing Resources
+  #
+
+  rInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: { Ref: 'AWS::StackName' }
+
+  rInternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: { Ref: rInternetGateway }
+      VpcId: { Ref: rVPC }
+
+  rPublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: { Ref: rVPC }
+      Tags:
+        - Key: Name
+          Value: { Ref: 'AWS::StackName' }
+
+  rPublicRouteToInternetGateway:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: { Ref: rInternetGateway }
+      RouteTableId: { Ref: rPublicRouteTable }
+
+  rNatGatewayElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+    DependsOn: rVPC
+
+  rNatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt 'rNatGatewayElasticIP.AllocationId'
+      SubnetId: { Ref: rPrivateSubnet1 }
+      Tags:
+        - Key: Name
+          Value: { Ref: 'AWS::StackName' }
+
+  rPrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: { Ref: rVPC }
+      Tags:
+        - Key: Name
+          Value: { Ref: 'AWS::StackName' }
+
+  rPrivateRouteToNatGateway:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: { Ref: rNatGateway }
+      RouteTableId: { Ref: rPrivateRouteTable }
 
