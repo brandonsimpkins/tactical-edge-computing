@@ -89,7 +89,7 @@ Parameters:
 Resources:
 
   #
-  # VPC and Subnet Resources
+  # Region - VPC and Subnets
   #
 
   rVPC:
@@ -145,7 +145,7 @@ Resources:
           Value: { Ref: 'AWS::StackName' }
 
   #
-  # Network Routing Resources
+  # Network - Gateways and Routes
   #
 
   rInternetGateway:
@@ -205,4 +205,43 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       NatGatewayId: { Ref: rNatGateway }
       RouteTableId: { Ref: rPrivateRouteTable }
+
+  #
+  # Network - Security Groups
+  #
+
+  rPublicWebSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Security group for incoming public web traffic'
+      VpcId: !Ref rVPC
+      SecurityGroupIngress:
+        - Description: 'Allows HTTPS traffic from all IPs'
+          IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+          FromPort: 443
+          ToPort: 443
+      Tags:
+        - Key: Name
+          Value: { Ref: 'AWS::StackName' }
+
+  rPublicBastionSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Security group for incoming public bastion traffic'
+      VpcId: !Ref rVPC
+      SecurityGroupIngress:
+        - Description: 'Allows SSH traffic from all IPs'
+          IpProtocol: tcp
+          CidrIp: 0.0.0.0/0
+          FromPort: 22
+          ToPort: 22
+      Tags:
+        - Key: Name
+          Value: { Ref: 'AWS::StackName' }
+
+
+
+
+
 
