@@ -508,7 +508,7 @@ Resources:
     DependsOn:
       - rPublicReverseProxyNLB
       - rFargateReverseProxyTargetGroup
-      - rFargateReverseProxyELBListener]
+      - rFargateReverseProxyELBListener
 
   # TODO:
   #
