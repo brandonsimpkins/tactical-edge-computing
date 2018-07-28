@@ -383,9 +383,41 @@ Resources:
       Name: !Join ['-', ['public-nlb-rp', !Ref 'AWS::StackName']]
       Scheme: internet-facing
       Subnets: [!Ref rPublicSubnet1, !Ref rPublicSubnet2]
-      # SecurityGroups: [!Ref rPublicWebSecurityGroup]
       Type: network
 
+  rFargateReverseProxyTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Join ['-', [!Ref 'AWS::StackName', 'rp-tg']]
+      VpcId: !Ref rVPC
+      Port: 443
+      Protocol: TCP
+      HealthCheckPath: /404.html
+      HealthCheckProtocol: HTTPS
+      TargetType: ip
+      Tags:
+        - Key: Name
+          Value: { Ref: 'AWS::StackName' }
+    DependsOn: [rPublicReverseProxyNLB]
+
+  rFargateReverseProxyELBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref rPublicReverseProxyNLB
+      Port: 443
+      Protocol: TCP
+      DefaultActions:
+      - Type: forward
+        TargetGroupArn: !Ref rFargateReverseProxyTargetGroup
+
+  #
+  # ECS - Fargate Cluster
+  #
+
+  rFargateCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Join ['-', [!Ref 'AWS::StackName', 'fargate-cluster']]
 
   # This is a role which is used by the ECS tasks themselves.
   rFargateTaskExecutionRole:
@@ -403,26 +435,23 @@ Resources:
       RoleName: !Join ['-', [!Ref 'AWS::StackName', 'fargate-role' ]]
 
   #
-  # ECS - Reverse Proxy Cluster
+  # ECS - Fargate Cloud Watch Logs
   #
 
-  rFargateCluster:
-    Type: AWS::ECS::Cluster
-    Properties:
-      ClusterName: !Join ['-', [!Ref 'AWS::StackName', 'fargate-cluster']]
+  # It is absolutely critical to have a log group with fargate! Currently there
+  # isn't another log provider, and without this log group you will have zero
+  # insight into how the container is running.
 
-  #
-  # It is absolutely critical to have a log group with fargate!
-  #
   rFargateReverseProxyLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Join ['', ['/fargate/', !Ref 'AWS::StackName', '-rp-service' ]]
       RetentionInDays: 365
 
+  #
+  # ECS - Fargate Reverse Proxy Task / Services
+  #
 
-  # The task definition. This is a simple metadata description of what
-  # container to run, and what resource requirements it has.
   rFargateReverseProxyTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
@@ -433,17 +462,11 @@ Resources:
       RequiresCompatibilities:
         - FARGATE
       ExecutionRoleArn: !Ref rFargateTaskExecutionRole
-      # TaskRoleArn:
-      #   Fn::If:
-      #     - 'HasCustomRole'
-      #     - !Ref 'Role'
-      #     - !Ref "AWS::NoValue"
       ContainerDefinitions:
         - Name: reverse-proxy-container
           Cpu: 1024
           Memory: 2048
-          # Image: !Join ['-', [!Ref 'AWS::AccountId', '.dkr.ecr.us-east-1.amazonaws.com/official-fd-reverse-proxy']]
-          Image: 873587440474.dkr.ecr.us-east-1.amazonaws.com/official-fd-reverse-proxy
+          Image: !Join ['', [!Ref 'AWS::AccountId', '.dkr.ecr.us-east-1.amazonaws.com/official-fd-reverse-proxy']]
           PortMappings:
             - ContainerPort: 443
           Environment:
@@ -460,43 +483,6 @@ Resources:
               awslogs-group: !Ref rFargateReverseProxyLogGroup
               awslogs-stream-prefix: fargate
 
-  # The health checks can be further tuned if your requirements differ
-  rFargateReverseProxyTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      Name: !Join ['-', [!Ref 'AWS::StackName', 'rp-tg']]
-      VpcId: !Ref rVPC
-      Port: 443
-      Protocol: TCP
-      # Matcher:
-      #   HttpCode: 200
-      #HealthCheckIntervalSeconds: 10
-      HealthCheckPath: /404.html
-      HealthCheckProtocol: HTTPS
-      # HealthCheckTimeoutSeconds: 5
-      # HealthyThresholdCount: 2
-      # TargetGroupAttributes:
-      # - Key: deregistration_delay.timeout_seconds
-      #   Value: 300
-      TargetType: ip
-      Tags:
-        - Key: Name
-          Value: { Ref: 'AWS::StackName' }
-    DependsOn: [rPublicReverseProxyNLB]
-
-  rFargateReverseProxyELBListener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      LoadBalancerArn: !Ref rPublicReverseProxyNLB
-      Port: 443
-      Protocol: TCP
-      DefaultActions:
-      - Type: forward
-        TargetGroupArn: !Ref rFargateReverseProxyTargetGroup
-
-  # The service. The service is a resource which allows you to run multiple
-  # copies of a type of task, and gather up their logs and metrics, as well
-  # as monitor the number of running tasks and replace any that have crashed
   rFargateReverseProxyService:
     Type: AWS::ECS::Service
     Properties:
@@ -514,14 +500,22 @@ Resources:
           # Subnets: [!Ref rPrivateSubnet1, !Ref rPrivateSubnet2]
           SecurityGroups: [!Ref rPublicWebSecurityGroup]
           Subnets: [!Ref rPublicSubnet1, !Ref rPublicSubnet2]
-
       TaskDefinition: !Ref rFargateReverseProxyTaskDefinition
       LoadBalancers:
         - ContainerName: reverse-proxy-container
           ContainerPort: 443
           TargetGroupArn: !Ref rFargateReverseProxyTargetGroup
-    DependsOn: [rPublicReverseProxyNLB, rFargateReverseProxyTargetGroup, rFargateReverseProxyELBListener]
+    DependsOn:
+      - rPublicReverseProxyNLB
+      - rFargateReverseProxyTargetGroup
+      - rFargateReverseProxyELBListener]
 
-
+  # TODO:
+  #
+  # 1) move reverse proxy cluster into private subnet
+  # 2) alb _+ supply services
+  # 3) rds?
+  # 4) code pipeline
+  #
 
 
