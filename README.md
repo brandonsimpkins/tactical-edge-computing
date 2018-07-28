@@ -127,6 +127,8 @@
     ```bash
     git clone --recurse-submodules https://github.com/aws-quickstart/quickstart-compliance-nist
     ```
+- Good ECS / Fargate Templates:
+  - https://github.com/nathanpeck/aws-cloudformation-fargate/blob/master/service-stacks/private-subnet-public-loadbalancer.yml
 
 
 
