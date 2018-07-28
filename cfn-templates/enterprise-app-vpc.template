@@ -406,10 +406,10 @@ Resources:
   # ECS - Reverse Proxy Cluster
   #
 
-  rFargateReverseProxyCluster:
+  rFargateCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: !Join ['-', [!Ref 'AWS::StackName', 'reverse-proxy-cluster']]
+      ClusterName: !Join ['-', [!Ref 'AWS::StackName', 'fargate-cluster']]
 
   #
   # It is absolutely critical to have a log group with fargate!
@@ -501,7 +501,7 @@ Resources:
     Type: AWS::ECS::Service
     Properties:
       ServiceName: !Join ['-', [!Ref 'AWS::StackName', 'reverse-proxy-service']]
-      Cluster: !Ref rFargateReverseProxyCluster
+      Cluster: !Ref rFargateCluster
       LaunchType: FARGATE
       DeploymentConfiguration:
         MaximumPercent: 200
