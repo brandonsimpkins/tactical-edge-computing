@@ -136,54 +136,54 @@ Resources:
   rVPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: { Ref: pVPCCidrRange }
+      CidrBlock: !Ref pVPCCidrRange
       Tags:
         - Key: Name
-          Value: { Ref: 'AWS::StackName' }
+          Value: !Join ['-', [!Ref 'AWS::StackName', 'vpc' ]]
 
   rPublicSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: { Ref: pAvailabilityZone1 }
-      CidrBlock: { Ref: pPublicSubnetCidrRange1 }
+      AvailabilityZone: !Ref pAvailabilityZone1
+      CidrBlock: !Ref pPublicSubnetCidrRange1
       MapPublicIpOnLaunch: true
-      VpcId: { Ref: rVPC }
+      VpcId: !Ref rVPC
       Tags:
         - Key: Name
-          Value: { Ref: 'AWS::StackName' }
+          Value: !Join ['-', ['public', !Ref 'AWS::StackName', 'subnet' ]]
 
   rPublicSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: { Ref: pAvailabilityZone2 }
-      CidrBlock: { Ref: pPublicSubnetCidrRange2 }
+      AvailabilityZone: !Ref pAvailabilityZone2
+      CidrBlock: !Ref pPublicSubnetCidrRange2
       MapPublicIpOnLaunch: true
-      VpcId: { Ref: rVPC }
+      VpcId: !Ref rVPC
       Tags:
         - Key: Name
-          Value: { Ref: 'AWS::StackName' }
+          Value: !Join ['-', ['public', !Ref 'AWS::StackName', 'subnet' ]]
 
   rPrivateSubnet1:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: { Ref: pAvailabilityZone1 }
-      CidrBlock: { Ref: pPrivateSubnetCidrRange1 }
+      AvailabilityZone: !Ref pAvailabilityZone1
+      CidrBlock: !Ref pPrivateSubnetCidrRange1
       MapPublicIpOnLaunch: false
-      VpcId: { Ref: rVPC }
+      VpcId: !Ref rVPC
       Tags:
         - Key: Name
-          Value: { Ref: 'AWS::StackName' }
+          Value: !Join ['-', ['private', !Ref 'AWS::StackName', 'subnet' ]]
 
   rPrivateSubnet2:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: { Ref: pAvailabilityZone2 }
-      CidrBlock: { Ref: pPrivateSubnetCidrRange2 }
+      AvailabilityZone: !Ref pAvailabilityZone2
+      CidrBlock: !Ref pPrivateSubnetCidrRange2
       MapPublicIpOnLaunch: false
-      VpcId: { Ref: rVPC }
+      VpcId: !Ref rVPC
       Tags:
         - Key: Name
-          Value: { Ref: 'AWS::StackName' }
+          Value: !Join ['-', ['private', !Ref 'AWS::StackName', 'subnet' ]]
 
   #
   # Network - Gateways and Routes
