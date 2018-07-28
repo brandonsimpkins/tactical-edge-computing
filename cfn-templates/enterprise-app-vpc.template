@@ -239,7 +239,7 @@ Resources:
     Type: AWS::EC2::NatGateway
     Properties:
       AllocationId: !GetAtt 'rNatGatewayElasticIP.AllocationId'
-      SubnetId: { Ref: rPrivateSubnet1 }
+      SubnetId: { Ref: rPublicSubnet1 }
       Tags:
         - Key: Name
           Value: { Ref: 'AWS::StackName' }
