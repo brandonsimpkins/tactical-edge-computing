@@ -129,6 +129,8 @@
     ```
 - Good ECS / Fargate Templates:
   - https://github.com/nathanpeck/aws-cloudformation-fargate/blob/master/service-stacks/private-subnet-public-loadbalancer.yml
+- Overview of conditional x509 authentication based on URL:
+  -  https://fardog.io/blog/2017/12/30/client-side-certificate-authentication-with-nginx/
 
 
 
