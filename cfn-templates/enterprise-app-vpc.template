@@ -37,9 +37,10 @@ Metadata:
 
 Parameters:
 
-  pEC2KeyPair:
-    Description: Name of EC2 key pair used to log into instances.
-    Type: String
+  pBastionKeyPair:
+    Description: Name of EC2 key pair used to log into Bastion instances.
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
     Default: 'bssimpk-dev'
 
   pAvailabilityZone1:
@@ -85,6 +86,41 @@ Parameters:
       - 'DEVELOPMENT'
       - 'TEST'
       - 'PRODUCTION'
+
+  pBastionInstanceType:
+    Description: Bastion Host EC2 instance type
+    Type: String
+    Default: t2.small
+    AllowedValues:
+      - t2.small
+      - t2.medium
+      - t2.large
+    ConstraintDescription: Must be a valid EC2 instance type.
+
+
+##############################################################################
+#
+#  Mappings
+#
+#######################################################################
+
+Mappings:
+
+  mMapInstanceTypeToArch:
+    t2.small:  { Arch: HVM64 }
+    t2.medium: { Arch: HVM64 }
+    t2.large:  { Arch: HVM64 }
+
+  mMapRegionArchToAmazonLinux1AMI:
+    us-east-1:
+      HVM64: ami-cfe4b2b0
+
+
+##############################################################################
+#
+#  Resources
+#
+#######################################################################
 
 Resources:
 
@@ -264,8 +300,57 @@ Resources:
         - Key: Name
           Value: { Ref: 'AWS::StackName' }
 
+  #
+  # EC2 - Bastion Hosts
+  #
 
+  rPublicBastion1:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref pBastionInstanceType
+      SecurityGroupIds:
+        - !Ref rPublicBastionSecurityGroup
+      KeyName: !Ref pBastionKeyPair
+      SubnetId: !Ref rPublicSubnet1
+      ImageId:
+        Fn::FindInMap:
+        - mMapRegionArchToAmazonLinux1AMI
+        - Ref: AWS::Region
+        - Fn::FindInMap:
+          - mMapInstanceTypeToArch
+          - Ref: pBastionInstanceType
+          - Arch
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - 'public-bastion'
+              - !Ref 'AWS::StackName'
+              - !GetAtt 'rPublicSubnet1.AvailabilityZone'
 
+  rPublicBastion2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref pBastionInstanceType
+      SecurityGroupIds:
+        - !Ref rPublicBastionSecurityGroup
+      KeyName: !Ref pBastionKeyPair
+      SubnetId: !Ref rPublicSubnet2
+      ImageId:
+        Fn::FindInMap:
+        - mMapRegionArchToAmazonLinux1AMI
+        - Ref: AWS::Region
+        - Fn::FindInMap:
+          - mMapInstanceTypeToArch
+          - Ref: pBastionInstanceType
+          - Arch
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - 'public-bastion'
+              - !Ref 'AWS::StackName'
+              - !GetAtt 'rPublicSubnet2.AvailabilityZone'
 
 
 
