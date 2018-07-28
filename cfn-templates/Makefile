@@ -15,6 +15,7 @@ help:
 
 deploy-ea-vpc:
 	aws cloudformation deploy \
+		--capabilities CAPABILITY_IAM \
 		--region us-east-1 \
 		--stack-name test-deploy-ea-vpc \
 		--template-file enterprise-app-vpc.template
