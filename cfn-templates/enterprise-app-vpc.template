@@ -352,5 +352,31 @@ Resources:
               - !Ref 'AWS::StackName'
               - !GetAtt 'rPublicSubnet2.AvailabilityZone'
 
+  #
+  # Public ELB
+  #
+
+  rPublicReverseProxyELB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Join ['-', ['public-rp', !Ref 'AWS::StackName']]
+      Scheme: internet-facing
+      Subnets: [!Ref rPublicSubnet1, !Ref rPublicSubnet2]
+      SecurityGroups: [!Ref rPublicWebSecurityGroup]
+
+  rPublicDummyTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 6
+      HealthCheckPath: /dummy-healthcheck-that-will-fail.html
+      HealthCheckProtocol: HTTPS
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      Name: !Join ['-', [!Ref 'AWS::StackName', 'drop-1']]
+      Port: 443
+      Protocol: HTTPS
+      UnhealthyThresholdCount: 2
+      VpcId: !Ref rVPC
+
 
 
