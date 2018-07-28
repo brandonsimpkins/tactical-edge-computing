@@ -121,6 +121,14 @@
   - https://docs.djangoproject.com/en/dev/howto/auth-remote-user/
 - Great GitHub README Markdown Cheat Sheet!
   - https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+- AWS NIST quickstart reference:
+  - https://github.com/aws-quickstart/quickstart-compliance-nist
+  - checkout command:
+    ```bash
+    git clone --recurse-submodules https://github.com/aws-quickstart/quickstart-compliance-nist
+    ```
+
+
 
 ## AWS CLI Command Reference:
 - Recursive copy into S3
