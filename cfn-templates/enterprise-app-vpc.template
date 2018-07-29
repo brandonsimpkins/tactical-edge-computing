@@ -335,9 +335,9 @@ Resources:
       GroupDescription: 'Security group for incoming reverse proxy traffic'
       VpcId: !Ref rVPC
       SecurityGroupIngress:
-        - Description: 'Allows HTTPS traffic from all the public ELB'
+        - Description: 'Allows HTTPS traffic from inside the VPC'
           IpProtocol: tcp
-          SourceSecurityGroupId: !Ref rPublicWebSecurityGroup
+          CidrIp: 10.200.0.0/16
           FromPort: 443
           ToPort: 443
       Tags:
@@ -513,13 +513,11 @@ Resources:
         MaximumPercent: 200
         MinimumHealthyPercent: 75
       DesiredCount: 2
+      HealthCheckGracePeriodSeconds: 30
       NetworkConfiguration:
         AwsvpcConfiguration:
-          AssignPublicIp: ENABLED
-          # SecurityGroups: [!Ref rPrivateReverseProxyContainerSecurityGroup]
-          # Subnets: [!Ref rPrivateSubnet1, !Ref rPrivateSubnet2]
-          SecurityGroups: [!Ref rPublicWebSecurityGroup]
-          Subnets: [!Ref rPublicSubnet1, !Ref rPublicSubnet2]
+          SecurityGroups: [!Ref rPrivateReverseProxyContainerSecurityGroup]
+          Subnets: [!Ref rPrivateSubnet1, !Ref rPrivateSubnet2]
       TaskDefinition: !Ref rFargateReverseProxyTaskDefinition
       LoadBalancers:
         - ContainerName: reverse-proxy-container
@@ -532,7 +530,6 @@ Resources:
 
   # TODO:
   #
-  # 1) move reverse proxy cluster into private subnet
   # 2) alb _+ supply services
   # 3) rds?
   # 4) code pipeline
