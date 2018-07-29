@@ -384,7 +384,7 @@ Resources:
   rPublicReverseProxyNLB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Name: !Join ['-', ['public-nlb-rp', !Ref 'AWS::StackName']]
+      Name: !Sub 'public-nlb-rp-${AWS::StackName}'
       Scheme: internet-facing
       Subnets: [!Ref rPublicSubnet1, !Ref rPublicSubnet2]
       Type: network
@@ -392,7 +392,7 @@ Resources:
   rFargateReverseProxyTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: !Join ['-', [!Ref 'AWS::StackName', 'rp-tg']]
+      Name: !Sub '${AWS::StackName}-rp-tg'
       VpcId: !Ref rVPC
       Port: 443
       Protocol: TCP
@@ -401,8 +401,8 @@ Resources:
       TargetType: ip
       Tags:
         - Key: Name
-          Value: { Ref: 'AWS::StackName' }
-    DependsOn: [rPublicReverseProxyNLB]
+          Value: !Sub '${AWS::StackName}-rp-tg'
+    DependsOn: rPublicReverseProxyNLB
 
   rFargateReverseProxyELBListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
@@ -421,9 +421,11 @@ Resources:
   rFargateCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: !Join ['-', [!Ref 'AWS::StackName', 'fargate-cluster']]
+      ClusterName: !Sub '${AWS::StackName}-fargate-cluster'
 
-  # This is a role which is used by the ECS tasks themselves.
+  # This role is granted to the ECS containers for execution. This role ties to
+  # a AWS managed policy 'AmazonECSTaskExecutionRolePolicy' that allows fargate
+  # containers to create/update log streams, and pull from ECR.
   rFargateTaskExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -436,7 +438,7 @@ Resources:
       Path: /
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      RoleName: !Join ['-', [!Ref 'AWS::StackName', 'fargate-role' ]]
+      RoleName: !Sub '${AWS::StackName}-fargate-role'
 
   #
   # ECS - Fargate Cloud Watch Logs
@@ -449,7 +451,7 @@ Resources:
   rFargateReverseProxyLogGroup:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: !Join ['', ['/fargate/', !Ref 'AWS::StackName', '-rp-service' ]]
+      LogGroupName: !Sub '/${AWS::StackName}/fargate-rp-service'
       RetentionInDays: 365
 
   #
@@ -459,7 +461,7 @@ Resources:
   rFargateReverseProxyTaskDefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
-      Family: !Join ['-', [!Ref 'AWS::StackName', 'reverse-proxy-td-family']]
+      Family: !Sub '${AWS::StackName}-reverse-proxy-td-family'
       Cpu: 1024
       Memory: 2048
       NetworkMode: awsvpc
@@ -470,7 +472,7 @@ Resources:
         - Name: reverse-proxy-container
           Cpu: 1024
           Memory: 2048
-          Image: !Join ['', [!Ref 'AWS::AccountId', '.dkr.ecr.us-east-1.amazonaws.com/official-fd-reverse-proxy']]
+          Image: !Sub '${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/official-fd-reverse-proxy'
           PortMappings:
             - ContainerPort: 443
           Environment:
@@ -490,7 +492,7 @@ Resources:
   rFargateReverseProxyService:
     Type: AWS::ECS::Service
     Properties:
-      ServiceName: !Join ['-', [!Ref 'AWS::StackName', 'reverse-proxy-service']]
+      ServiceName: !Sub '${AWS::StackName}-reverse-proxy-service'
       Cluster: !Ref rFargateCluster
       LaunchType: FARGATE
       DeploymentConfiguration:
