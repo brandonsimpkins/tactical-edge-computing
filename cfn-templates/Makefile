@@ -15,14 +15,15 @@ help:
 
 deploy-ea-vpc:
 	aws cloudformation deploy \
-		--capabilities CAPABILITY_IAM \
+		--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
 		--region us-east-1 \
-		--stack-name test-deploy-ea-vpc \
+		--stack-name TestDeployEA \
 		--template-file enterprise-app-vpc.template
 
 delete-ea-vpc:
 	aws cloudformation delete-stack \
 		--region us-east-1 \
-		--stack-name test-deploy-ea-vpc
+		--stack-name TestDeployEA
+		@#--stack-name test-deploy-ea-vpc
 
 
