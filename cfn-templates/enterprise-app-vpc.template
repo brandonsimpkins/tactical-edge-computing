@@ -186,7 +186,7 @@ Resources:
           Value: !Sub 'private-${AWS::StackName}-subnet-${pAvailabilityZone2}'
 
   #
-  # Network - Gateways and Routes
+  # Network - Public Gateways and Routes
   #
 
   # Note: The VPC creates a default route table that you apparently can't
@@ -232,6 +232,10 @@ Resources:
       SubnetId: !Ref rPublicSubnet2
       RouteTableId: !Ref rPublicRouteTable
 
+  #
+  # Network - Private Gateways and Routes
+  #
+
   rNatGatewayElasticIP:
     Type: AWS::EC2::EIP
     Properties:
@@ -275,7 +279,7 @@ Resources:
       RouteTableId: !Ref rPrivateRouteTable
 
   #
-  # Network - Security Groups
+  # Network - Public Security Groups
   #
 
   rPublicWebSecurityGroup:
@@ -291,7 +295,7 @@ Resources:
           ToPort: 443
       Tags:
         - Key: Name
-          Value: { Ref: 'AWS::StackName' }
+          Value: !Sub 'public-${AWS::StackName}-web-sg'
 
   rPublicBastionSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -301,14 +305,19 @@ Resources:
       SecurityGroupIngress:
         - Description: 'Allows SSH traffic from all IPs'
           IpProtocol: tcp
-          CidrIp: 0.0.0.0/0
+          CidrIp: 72.21.196.0/24
           FromPort: 22
           ToPort: 22
       Tags:
         - Key: Name
-          Value: { Ref: 'AWS::StackName' }
+          Value: !Sub 'public-${AWS::StackName}-bastion-sg'
 
-  # Ensure this traffic ONLY comes from services inside the public subnets!
+  #
+  # Network - Private Security Groups
+  #
+
+  # Note: Ensure this traffic ONLY comes from the public subnets!
+
   rPrivateReverseProxyContainerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -322,10 +331,10 @@ Resources:
           ToPort: 443
       Tags:
         - Key: Name
-          Value: { Ref: 'AWS::StackName' }
+          Value: !Sub 'private-${AWS::StackName}-reverse-proxy-sg'
 
   #
-  # EC2 - Bastion Hosts
+  # EC2 - Public Bastion Hosts
   #
 
   rPublicBastion1:
@@ -346,11 +355,7 @@ Resources:
           - Arch
       Tags:
         - Key: Name
-          Value: !Join
-            - '-'
-            - - 'public-bastion'
-              - !Ref 'AWS::StackName'
-              - !GetAtt 'rPublicSubnet1.AvailabilityZone'
+          Value: !Sub 'public-bastion-${AWS::StackName}-${pAvailabilityZone1}'
 
   rPublicBastion2:
     Type: AWS::EC2::Instance
@@ -370,11 +375,7 @@ Resources:
           - Arch
       Tags:
         - Key: Name
-          Value: !Join
-            - '-'
-            - - 'public-bastion'
-              - !Ref 'AWS::StackName'
-              - !GetAtt 'rPublicSubnet2.AvailabilityZone'
+          Value: !Sub 'public-bastion-${AWS::StackName}-${pAvailabilityZone2}'
 
   #
   # EC2 - Public ELB For the Reverse Proxy
