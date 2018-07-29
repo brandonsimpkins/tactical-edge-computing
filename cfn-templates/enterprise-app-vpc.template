@@ -102,6 +102,17 @@ Parameters:
       - t2.large
     ConstraintDescription: Must be a valid EC2 instance type.
 
+  # useful to override during development for faster iterations - the AWS
+  # API_TargetGroupAttribute deregistration_delay.timeout_seconds is 300
+  # second (5 min)
+  pELBDeregistrationDelay:
+    Description: The amount time (in seconds) to wait before changing the state of a deregistering target from draining to unused.
+    Type: Number
+    Default: 0
+    ConstraintDescription: Must be in the range [0-3600]
+    MinValue: 0
+    MaxValue: 3600
+
 
 ##############################################################################
 #
@@ -399,6 +410,9 @@ Resources:
       HealthCheckPath: /404.html
       HealthCheckProtocol: HTTPS
       TargetType: ip
+      TargetGroupAttributes:
+      - Key: deregistration_delay.timeout_seconds
+        Value: !Ref pELBDeregistrationDelay
       Tags:
         - Key: Name
           Value: !Sub '${AWS::StackName}-rp-tg'
