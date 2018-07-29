@@ -98,6 +98,13 @@
     [ec2-user@host ~]$ git commit --amend --reset-author
     ```
 
+## Issues
+- Django takes ~10 seconds to shutdown, I think this is due to a generic
+  timeout, and the SIG isn't getting handled correctly
+- NGINX wont start if upstream server is down.
+
+
+
 ## TODO
 - Create reverse proxy and x509 auth for django app
 - Create container for processing backups / upload to s3?
