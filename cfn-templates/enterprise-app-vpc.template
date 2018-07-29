@@ -139,7 +139,7 @@ Resources:
       CidrBlock: !Ref pVPCCidrRange
       Tags:
         - Key: Name
-          Value: !Join ['-', [!Ref 'AWS::StackName', 'vpc' ]]
+          Value: !Sub '${AWS::StackName}-vpc'
 
   rPublicSubnet1:
     Type: AWS::EC2::Subnet
@@ -150,7 +150,7 @@ Resources:
       VpcId: !Ref rVPC
       Tags:
         - Key: Name
-          Value: !Join ['-', ['public', !Ref 'AWS::StackName', 'subnet' ]]
+          Value: !Sub 'public-${AWS::StackName}-subnet-${pAvailabilityZone1}'
 
   rPublicSubnet2:
     Type: AWS::EC2::Subnet
@@ -161,7 +161,7 @@ Resources:
       VpcId: !Ref rVPC
       Tags:
         - Key: Name
-          Value: !Join ['-', ['public', !Ref 'AWS::StackName', 'subnet' ]]
+          Value: !Sub 'public-${AWS::StackName}-subnet-${pAvailabilityZone2}'
 
   rPrivateSubnet1:
     Type: AWS::EC2::Subnet
@@ -172,7 +172,7 @@ Resources:
       VpcId: !Ref rVPC
       Tags:
         - Key: Name
-          Value: !Join ['-', ['private', !Ref 'AWS::StackName', 'subnet' ]]
+          Value: !Sub 'private-${AWS::StackName}-subnet-${pAvailabilityZone1}'
 
   rPrivateSubnet2:
     Type: AWS::EC2::Subnet
@@ -183,39 +183,42 @@ Resources:
       VpcId: !Ref rVPC
       Tags:
         - Key: Name
-          Value: !Join ['-', ['private', !Ref 'AWS::StackName', 'subnet' ]]
+          Value: !Sub 'private-${AWS::StackName}-subnet-${pAvailabilityZone2}'
 
   #
   # Network - Gateways and Routes
   #
 
+  # Note: The VPC creates a default route table that you apparently can't
+  # access within the cloud formation template.
+
   rInternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
-      - Key: Name
-        Value: { Ref: 'AWS::StackName' }
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-igw'
 
   rInternetGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      InternetGatewayId: { Ref: rInternetGateway }
-      VpcId: { Ref: rVPC }
+      InternetGatewayId: !Ref rInternetGateway
+      VpcId: !Ref rVPC
 
   rPublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: { Ref: rVPC }
+      VpcId: !Ref rVPC
       Tags:
         - Key: Name
-          Value: { Ref: 'AWS::StackName' }
+          Value: !Sub 'public-${AWS::StackName}-route'
 
   rPublicRouteToInternetGateway:
     Type: AWS::EC2::Route
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: { Ref: rInternetGateway }
-      RouteTableId: { Ref: rPublicRouteTable }
+      GatewayId: !Ref rInternetGateway
+      RouteTableId: !Ref rPublicRouteTable
 
   rPublicSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
@@ -239,25 +242,25 @@ Resources:
     Type: AWS::EC2::NatGateway
     Properties:
       AllocationId: !GetAtt 'rNatGatewayElasticIP.AllocationId'
-      SubnetId: { Ref: rPublicSubnet1 }
+      SubnetId: !Ref rPublicSubnet1
       Tags:
         - Key: Name
-          Value: { Ref: 'AWS::StackName' }
+          Value: !Sub '${AWS::StackName}-nat-gw'
 
   rPrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: { Ref: rVPC }
+      VpcId: !Ref rVPC
       Tags:
         - Key: Name
-          Value: { Ref: 'AWS::StackName' }
+          Value: !Sub 'private-${AWS::StackName}-route'
 
   rPrivateRouteToNatGateway:
     Type: AWS::EC2::Route
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: { Ref: rNatGateway }
-      RouteTableId: { Ref: rPrivateRouteTable }
+      NatGatewayId: !Ref rNatGateway
+      RouteTableId: !Ref rPrivateRouteTable
 
   rPrivateSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
