@@ -116,7 +116,7 @@ Parameters:
   pRDSPassword:
     Description: Password for the RDS Postgres database
     Type: String
-    # Default: blah
+    Default: 'Changeme'
 
 ##############################################################################
 #
