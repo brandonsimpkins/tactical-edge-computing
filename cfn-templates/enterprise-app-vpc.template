@@ -641,3 +641,14 @@ Resources:
   #
 
 
+##############################################################################
+#
+#  Outputs
+#
+#######################################################################
+
+Outputs:
+
+  PublicURL:
+    Description: 'The public URL for the application'
+    Value: !Sub 'https://${rPublicReverseProxyNLB.DNSName}/'
