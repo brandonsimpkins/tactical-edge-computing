@@ -573,6 +573,12 @@ Resources:
       LogGroupName: !Sub '/${AWS::StackName}/fargate-rp-service'
       RetentionInDays: 365
 
+  rFargateSupplyServiceLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/${AWS::StackName}/fargate-supply-service'
+      RetentionInDays: 365
+
   #
   # ECS - Fargate Reverse Proxy Task / Services
   #
@@ -632,6 +638,45 @@ Resources:
       - rPublicReverseProxyNLB
       - rFargateReverseProxyTargetGroup
       - rFargateReverseProxyELBListener
+
+  #
+  # ECS - Fargate Supply Task / Services
+  #
+
+  rFargateSupplyServiceTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub '${AWS::StackName}-supply-service-td-family'
+      Cpu: 1024
+      Memory: 2048
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ExecutionRoleArn: !Ref rFargateTaskExecutionRole
+      ContainerDefinitions:
+        - Name: supply-service-container
+          Cpu: 1024
+          Memory: 2048
+          Image: !Sub '${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/official-fd-supply-rest-service'
+          PortMappings:
+            - ContainerPort: 80
+          Environment:
+            - Name: DEPLOYMENT_TYPE
+              Value: !Ref pDeploymentType
+            - Name: DB_HOST
+              Value: !Sub '${rPrivateRDSSupplyDB.Endpoint.Address}'
+            - Name: DB_NAME
+              Value: !Sub '${AWS::StackName}SupplyDB'
+            - Name: DB_USER
+              Value: !Sub '${AWS::StackName}User'
+            - Name: DB_PASSWORD
+              Value: !Sub '${AWS::StackName}Password'
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-region: !Ref AWS::Region
+              awslogs-group: !Ref rFargateSupplyServiceLogGroup
+              awslogs-stream-prefix: fargate
 
   # TODO:
   #
