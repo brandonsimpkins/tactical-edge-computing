@@ -26,6 +26,24 @@
     happen when you break your deploymenr *cough* security group rules), BUT
     the default rollback timer is 3 hours! And you can't change it!
 
+05. Cloud formation and ECS don't always play nice together. When you try to
+    roll back cloud formation changes wheile ECS is trying to stablize,
+    cloud formation gets stuck. In trying to fix it I have had to (1) fix the
+    issue causing the deployment failure (e.g. change security group rules),
+    (2) update the service to have 0 deployed containers (3) trigger a stack
+    delete / wait for a timeout.
+
+06. Configuration drift between existing cloud formation stack resources and
+    the template is possible. Especially when you edit resources in the
+    console. Appropriate steps should be take to prevent that.
+    - A Blue / Green deployment model would certainly help with a constant
+      refresh of the whole application vpc.
+
+To be fair, while these issues are annoying in development it seems that cloud
+formation and ECS err on the side of caution. No doubt, generating and apply
+change sets across distributed infrasture is a challenging task. I'm sure a
+slow 3 hour automatic rollback of serices is nice should a deployment go south.
+
 ## Local Development Settings
 
 01. Create a vanilla development server (I started with a AL1 EC2 instance), AWS
