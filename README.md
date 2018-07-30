@@ -1,5 +1,43 @@
 # tactical-edge-computing
 
+## Features
+01. "Cloud Native" application - See: [What Are Cloud-Native Applications?]
+    (https://pivotal.io/cloud-native)
+    - Created a supply management micro service to handle (issue, receipt,
+      stow) operations (e.g. managing inventory).
+      - While the [Django Rest Framework]
+        (http://www.django-rest-framework.org/) might be a bit heavy for some
+        to qualify as a "micro service", it provides the following great
+        features that are definitely necessary at the enterprise level:
+        - ORM / model layer which provides absrtraction from the relational
+          database and allows for different database choices.
+        - Simplified schema migration management.
+        - Automatic created UI useful for navigating the rest services API.
+          much easier.
+        - Generic views / template capabilties. Significatnly reduces
+          boilerplate code.
+        - User authentication and authorization.
+    - Created a reverse proxy layer to server static content / javascript
+      based applications and route to the microservices.
+      - Static content delivery (HTML + CSS)
+      - Dynamic service routing
+      - Simple HTTPS configuration and management
+      - Built in HTTP request logging and forwarding
+
+02. Development tools and scripts
+    - Script to install the latest version of [Docker Compose]
+      (https://docs.docker.com/compose/)
+    - Script to generate a self signed CA
+    - Script to generate a server certificate (from the self signed CA)
+    - Script to generate a user certificate p12 (from the self signed CA)
+
+
+
+
+## Future Features
+01. X509 based client authentication (I'm *this* close)
+01. Create development server AMIs / bake in Cloud9.
+
 ## AWS Issues That Need Improvement
 
 01. Ugh their python distro. makes me want to not use their virtualenv packages
