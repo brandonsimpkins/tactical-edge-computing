@@ -6,6 +6,11 @@ SHELL = /bin/bash
 # parameters to override and pass in
 STACK_NAME ?= TestDeployEA
 
+# conditionally set the --parameter-overrides option
+ifdef STACK_PARAMS
+	PARAMETER_OVERRIDES = --parameter-overrides $(STACK_PARAMS)
+endif
+
 all: help
 
 help:
@@ -17,7 +22,8 @@ help:
 	@echo
 	@echo " Default Settings:"
 	@echo
-	@echo "  STACK_NAME = $(STACK_NAME)"
+	@echo "  STACK_NAME   = $(STACK_NAME)"
+	@echo "  STACK_PARAMS = $(STACK_PARAMS)"
 	@echo
 	@echo " Pass in ENV variables to ovveride them:"
 	@echo
@@ -29,6 +35,7 @@ deploy-ea-vpc:
 		--capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
 		--region us-east-1 \
 		--stack-name $(STACK_NAME) \
+		$(PARAMETER_OVERRIDES) \
 		--template-file enterprise-app-vpc.template
 
 delete-ea-vpc:
