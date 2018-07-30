@@ -534,6 +534,47 @@ Resources:
         TargetGroupArn: !Ref rFargateReverseProxyTargetGroup
 
   #
+  # EC2 - Private ALB for Public ELB For the Reverse Proxy
+  #
+
+  rPrivateSupplyServiceALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub 'private-alb-supply-${AWS::StackName}'
+      Scheme: internal
+      SecurityGroups: [!Ref rPrivateRestServiceSecurityGroup]
+      Subnets: [!Ref rPrivateSubnet1, !Ref rPrivateSubnet2]
+      Type: application
+
+  rFargateSupplyServiceTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub '${AWS::StackName}-supply-tg'
+      VpcId: !Ref rVPC
+      Port: 80
+      Protocol: HTTP
+      HealthCheckPath: /supply/health-check/
+      HealthCheckProtocol: HTTP
+      TargetType: ip
+      TargetGroupAttributes:
+      - Key: deregistration_delay.timeout_seconds
+        Value: !Ref pELBDeregistrationDelay
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-supply-tg'
+    DependsOn: rPrivateSupplyServiceALB
+
+  rFargateSupplyServiceALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref rPrivateSupplyServiceALB
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+      - Type: forward
+        TargetGroupArn: !Ref rFargateSupplyServiceTargetGroup
+
+  #
   # ECS - Fargate Cluster
   #
 
@@ -683,6 +724,9 @@ Resources:
   # 2) alb _+ supply services
   # 3.5) DNS Zone?
   # 4) code pipeline
+  # 5) Replace 'ELB' nomeclature with 'NLB'
+  # 6) dial down the private reverse proxy container SG to only accept
+  #    connections from the public subnets?
   #
 
 
