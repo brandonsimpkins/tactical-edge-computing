@@ -1,5 +1,31 @@
 # tactical-edge-computing
 
+## AWS Issues That Need Improvement
+
+01. Ugh their python distro. makes me want to not use their virtualenv packages
+    at all. Definitley not "Enterprise Ready"
+    - See my [Python Complaints About VirtualENV on AWS](pip-install-error.txt)
+      where I documented my issues with the PYTHON_INSTALL_LAYOUT environment
+      variable setting.
+
+02. General lack of Fargate logging. When something goes wrong in ECS is is not
+    very apparent what is going on. This problem is worse in Fargate. And it's
+    even worse when you dont use Cloud Watch logs (the only log provide)! I had
+    to learn that one the hard way.
+
+03. I'm not sure if this is still an issue or not, but a few weeks ago ECS was
+    not logging when a ELB shutdown a container due to a healthcheck. When I
+    and deploying my app via cloudformation it does. Will need to see if I can
+    replicate the issue with code pipeline again. But with no notification
+    about containers getting shut down due to health checks, the ECS / Fargate
+    deployment will just constantly thrash between INITIAL and UNHEALTHY.
+
+04. Cloud formation deployments don't trigger a rollback when a ECS deployment
+    fails. This is the craziest thing of all. Not only will your cloud
+    formation deployment just spin waiting for ECS to finish (which doesn't
+    happen when you break your deploymenr *cough* security group rules), BUT
+    the default rollback timer is 3 hours! And you can't change it!
+
 ## Local Development Settings
 
 01. Create a vanilla development server (I started with a AL1 EC2 instance), AWS
@@ -98,7 +124,7 @@
     [ec2-user@host ~]$ git commit --amend --reset-author
     ```
 
-## Issues
+##  App Issues
 - Django takes ~10 seconds to shutdown, I think this is due to a generic
   timeout, and the SIG isn't getting handled correctly
 - NGINX wont start if upstream server is down.

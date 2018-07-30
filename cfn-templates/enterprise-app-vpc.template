@@ -351,11 +351,11 @@ Resources:
         - Key: Name
           Value: !Sub 'private-${AWS::StackName}-reverse-proxy-sg'
 
-  rPrivateRestServiceSecurityGroup:
+  rPrivateALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub 'private-${AWS::StackName}-rest-service-sg'
-      GroupDescription: 'Security group for incoming rest service traffic'
+      GroupName: !Sub 'private-${AWS::StackName}-alb-sg'
+      GroupDescription: 'Security group for incoming alb traffic'
       VpcId: !Ref rVPC
       SecurityGroupIngress:
         - Description: 'Allows HTTP traffic from the private reverse proxy security group'
@@ -365,17 +365,33 @@ Resources:
           ToPort: 80
       Tags:
         - Key: Name
-          Value: !Sub 'private-${AWS::StackName}-rest-service-sg'
+          Value: !Sub 'private-${AWS::StackName}-alb-sg'
 
-  rPrivateRestServiceSecurityGroupBastionIngress:
+  rPrivateALBSecurityGroupBastionIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
-      GroupId: !Ref rPrivateRestServiceSecurityGroup
+      GroupId: !Ref rPrivateALBSecurityGroup
       Description: 'Allows HTTP traffic from the public bastion security group'
       IpProtocol: tcp
       SourceSecurityGroupId: !Ref rPublicBastionSecurityGroup
       FromPort: 80
       ToPort: 80
+
+  rPrivateRestServiceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub 'private-${AWS::StackName}-rest-service-sg'
+      GroupDescription: 'Security group for incoming rest service traffic'
+      VpcId: !Ref rVPC
+      SecurityGroupIngress:
+        - Description: 'Allows HTTP traffic from the private ALB security group'
+          IpProtocol: tcp
+          SourceSecurityGroupId: !Ref rPrivateALBSecurityGroup
+          FromPort: 80
+          ToPort: 80
+      Tags:
+        - Key: Name
+          Value: !Sub 'private-${AWS::StackName}-rest-service-sg'
 
   rPrivateRDSSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -542,7 +558,7 @@ Resources:
     Properties:
       Name: !Sub 'private-alb-supply-${AWS::StackName}'
       Scheme: internal
-      SecurityGroups: [!Ref rPrivateRestServiceSecurityGroup]
+      SecurityGroups: [!Ref rPrivateALBSecurityGroup]
       Subnets: [!Ref rPrivateSubnet1, !Ref rPrivateSubnet2]
       Type: application
 
@@ -647,7 +663,7 @@ Resources:
             - Name: REVERSE_PROXY_FQDN
               Value: !Ref pReverseProxyDomainName
             - Name: SUPPLY_SERVICE_FQDN
-              Value: localhost
+              Value: !Sub '${rPrivateSupplyServiceALB.DNSName}'
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -718,6 +734,31 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-group: !Ref rFargateSupplyServiceLogGroup
               awslogs-stream-prefix: fargate
+
+  rFargateSupplyService:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: !Sub '${AWS::StackName}-supply-service'
+      Cluster: !Ref rFargateCluster
+      LaunchType: FARGATE
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 75
+      DesiredCount: 2
+      HealthCheckGracePeriodSeconds: 30
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          SecurityGroups: [!Ref rPrivateRestServiceSecurityGroup]
+          Subnets: [!Ref rPrivateSubnet1, !Ref rPrivateSubnet2]
+      TaskDefinition: !Ref rFargateSupplyServiceTaskDefinition
+      LoadBalancers:
+        - ContainerName: supply-service-container
+          ContainerPort: 80
+          TargetGroupArn: !Ref rFargateSupplyServiceTargetGroup
+    DependsOn:
+      - rPrivateSupplyServiceALB
+      - rFargateSupplyServiceTargetGroup
+      - rFargateSupplyServiceALBListener
 
   # TODO:
   #
