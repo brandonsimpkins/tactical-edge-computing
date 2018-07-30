@@ -300,6 +300,7 @@ Resources:
   rPublicWebSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
+      GroupName: !Sub 'public-${AWS::StackName}-web-sg'
       GroupDescription: 'Security group for incoming public web traffic'
       VpcId: !Ref rVPC
       SecurityGroupIngress:
@@ -315,6 +316,7 @@ Resources:
   rPublicBastionSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
+      GroupName: !Sub 'public-${AWS::StackName}-bastion-sg'
       GroupDescription: 'Security group for incoming public bastion traffic'
       VpcId: !Ref rVPC
       SecurityGroupIngress:
@@ -333,9 +335,10 @@ Resources:
 
   # Note: Ensure this traffic ONLY comes from the public subnets!
 
-  rPrivateReverseProxyContainerSecurityGroup:
+  rPrivateReverseProxySecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
+      GroupName: !Sub 'private-${AWS::StackName}-reverse-proxy-sg'
       GroupDescription: 'Security group for incoming reverse proxy traffic'
       VpcId: !Ref rVPC
       SecurityGroupIngress:
@@ -348,27 +351,56 @@ Resources:
         - Key: Name
           Value: !Sub 'private-${AWS::StackName}-reverse-proxy-sg'
 
+  rPrivateRestServiceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub 'private-${AWS::StackName}-rest-service-sg'
+      GroupDescription: 'Security group for incoming rest service traffic'
+      VpcId: !Ref rVPC
+      SecurityGroupIngress:
+        - Description: 'Allows HTTP traffic from the private reverse proxy security group'
+          IpProtocol: tcp
+          SourceSecurityGroupId: !Ref rPrivateReverseProxySecurityGroup
+          FromPort: 80
+          ToPort: 80
+      Tags:
+        - Key: Name
+          Value: !Sub 'private-${AWS::StackName}-rest-service-sg'
+
+  rPrivateRestServiceSecurityGroupBastionIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref rPrivateRestServiceSecurityGroup
+      Description: 'Allows HTTP traffic from the public bastion security group'
+      IpProtocol: tcp
+      SourceSecurityGroupId: !Ref rPublicBastionSecurityGroup
+      FromPort: 80
+      ToPort: 80
+
   rPrivateRDSSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
+      GroupName: !Sub 'private-${AWS::StackName}-rds-sg'
       GroupDescription: 'Security group for incoming database traffic'
       VpcId: !Ref rVPC
       SecurityGroupIngress:
-      - IpProtocol: tcp
-        FromPort: 5432
-        ToPort: 5432
-        CidrIp: 0.0.0.0/0
-        # SourceSecurityGroupId: {'Fn::ImportValue': !Sub '${ParentClientStack}-ClientSecurityGroup'}
+        - Description: 'Allows psql traffic from the private rest service security group'
+          IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref rPrivateRestServiceSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub 'private-${AWS::StackName}-rds-sg'
 
-        #   rPrivateRDSSecurityGroupInSSHBastion:
-        #     Type: 'AWS::EC2::SecurityGroupIngress'
-        #     Condition: HasSSHBastionSecurityGroup
-        #     Properties:
-        #       GroupId: !Ref rPrivateRDSSecurityGroup
-        #       IpProtocol: tcp
-        #       FromPort: 5432
-        #       ToPort: 5432
-        #       SourceSecurityGroupId: {'Fn::ImportValue': !Sub '${ParentSSHBastionStack}-SecurityGroup'}
+  rPrivateRDSSecurityGroupBastionIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref rPrivateRDSSecurityGroup
+      IpProtocol: tcp
+      SourceSecurityGroupId: !Ref rPublicBastionSecurityGroup
+      FromPort: 5432
+      ToPort: 5432
 
   #
   # RDS - Supply Database
@@ -390,6 +422,7 @@ Resources:
       BackupRetentionPeriod: 30
       CopyTagsToSnapshot: true
       DBInstanceClass: 'db.t2.micro'
+      DBInstanceIdentifier: !Sub '${AWS::StackName}SupplyDB'
       DBName: !Sub '${AWS::StackName}SupplyDB'
       DBSubnetGroupName: !Ref rPrivateRDSSubnetGroup
       Engine: postgres
@@ -588,7 +621,7 @@ Resources:
       HealthCheckGracePeriodSeconds: 30
       NetworkConfiguration:
         AwsvpcConfiguration:
-          SecurityGroups: [!Ref rPrivateReverseProxyContainerSecurityGroup]
+          SecurityGroups: [!Ref rPrivateReverseProxySecurityGroup]
           Subnets: [!Ref rPrivateSubnet1, !Ref rPrivateSubnet2]
       TaskDefinition: !Ref rFargateReverseProxyTaskDefinition
       LoadBalancers:
