@@ -2,8 +2,8 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Description: >-
   Creates a standalone application vpc and deploys a sample web application
-  with reverse proxy, ELBs, RDS, and other resources required for application
-  development, testing, and deployment.
+  with reverse proxy, NLB, ALB, RDS, and other resources required for
+  application development, testing, and deployment.
 
 Metadata:
   Stack:
@@ -117,6 +117,12 @@ Parameters:
     Description: Password for the RDS Postgres database
     Type: String
     Default: 'Changeme'
+
+  pPublicHostedZoneName:
+    Description: Hosted zone name for the public DNS entries (must have a trailing period)
+    Type: String
+    Default: 'tec.simpkins.cloud.'
+
 
 ##############################################################################
 #
@@ -662,6 +668,7 @@ Resources:
               Value: !Ref pDeploymentType
             - Name: REVERSE_PROXY_FQDN
               Value: !Ref pReverseProxyDomainName
+              # Value: !Sub '${pDeploymentType}.${pPublicHostedZoneName}'
             - Name: SUPPLY_SERVICE_FQDN
               Value: !Sub '${rPrivateSupplyServiceALB.DNSName}'
           LogConfiguration:
@@ -760,11 +767,47 @@ Resources:
       - rFargateSupplyServiceTargetGroup
       - rFargateSupplyServiceALBListener
 
+  #
+  # Route53 - Public DNS entries
+  #
+
+  rPublicReverseProxyNLBDnsRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Ref pPublicHostedZoneName
+      Comment:  !Sub 'DNS record for the ${AWS::StackName} ELB front door'
+      Name: !Sub '${pDeploymentType}.${pPublicHostedZoneName}'
+      Type: CNAME
+      TTL: '30'
+      ResourceRecords:
+        - !GetAtt rPublicReverseProxyNLB.DNSName
+
+  rPublicBastion1DnsRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Ref pPublicHostedZoneName
+      Comment:  !Sub 'DNS record for the ${AWS::StackName} public bastion in ${pAvailabilityZone1}'
+      Name: !Sub 'bastion-${pAvailabilityZone1}.${pDeploymentType}.${pPublicHostedZoneName}'
+      Type: A
+      TTL: '30'
+      ResourceRecords:
+        - !GetAtt rPublicBastion1.PublicIp
+
+  rPublicBastion2DnsRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Ref pPublicHostedZoneName
+      Comment:  !Sub 'DNS record for the ${AWS::StackName} public bastion in ${pAvailabilityZone2}'
+      Name: !Sub 'bastion-${pAvailabilityZone2}.${pDeploymentType}.${pPublicHostedZoneName}'
+      Type: A
+      TTL: '30'
+      ResourceRecords:
+        - !GetAtt rPublicBastion2.PublicIp
+
   # TODO:
   #
-  # 2) alb _+ supply services
-  # 3.5) DNS Zone?
   # 4) code pipeline
+  # 4.5) bastion host auto scaling group?
   # 5) Replace 'ELB' nomeclature with 'NLB'
   # 6) dial down the private reverse proxy container SG to only accept
   #    connections from the public subnets?
@@ -779,6 +822,19 @@ Resources:
 
 Outputs:
 
-  PublicURL:
+  ApplicationURL:
     Description: 'The public URL for the application'
+    Value: !Sub 'https://${rPublicReverseProxyNLBDnsRecord}/'
+
+  Bastion1:
+    Description: 'The FQDN for Bastion 1'
+    Value: !Ref rPublicBastion1DnsRecord
+
+  Bastion2:
+    Description: 'The FQDN for Bastion 2'
+    Value: !Ref rPublicBastion2DnsRecord
+
+  PublicNLB:
+    Description: 'The public URL for the application NLB'
     Value: !Sub 'https://${rPublicReverseProxyNLB.DNSName}/'
+
