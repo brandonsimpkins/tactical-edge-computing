@@ -1,5 +1,7 @@
 #!/bin/sh
 
+sleep 30
+
 echo '
 <!doctype html>
 <html lang="en">
