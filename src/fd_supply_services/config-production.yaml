@@ -16,3 +16,6 @@ database:
 
 # disable debug mode in production
 debug: False
+
+HTTP_X_FORWARDED_PROTO: http
+

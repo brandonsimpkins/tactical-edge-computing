@@ -92,7 +92,12 @@ if DEBUG:
 ALLOWED_HOSTS = ['*']
 
 USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
+
+if 'HTTP_X_FORWARDED_PROTO' in settings:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO',
+                               settings['HTTP_X_FORWARDED_PROTO'])
+else:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
