@@ -46,6 +46,8 @@ services:
       - DEPLOYMENT_TYPE=DEV-LOCAL
       # - DEPLOYMENT_TYPE=DEV-REMOTE
       # - DEPLOYMENT_TYPE=PRODUCTION
+      # - REVERSE_PROXY_FQDN=FARNSWORTH.dev.SIMpkins.CLOUd
+      # - SUPPLY_SERVICE_FQDN=supply-rest-service.internal.com
     build:
       context: ./reverse-proxy
       dockerfile: Dockerfile
