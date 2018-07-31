@@ -118,6 +118,10 @@ openssl x509 -noout -in $NGINX_PUBLIC_CERT -text | \
   sed 's/^\s*/  /g'
 echo
 
+
+/opt/reverse-proxy/scripts/get-host-metadata.sh > /usr/local/nginx/html/host-metadata.html
+ls -la /usr/local/nginx/html/host-metadata.html
+
 # Start up nginx, save PID so we can reload config inside of run_certbot.sh
 echo "Starting Nginx"
 nginx -g "daemon off;"
