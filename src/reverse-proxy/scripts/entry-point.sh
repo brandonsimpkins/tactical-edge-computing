@@ -39,7 +39,9 @@ if [ "$DEPLOYMENT_TYPE" == "DEV-LOCAL" ] || \
   REVERSE_PROXY_FQDN="$(hostname -f)"
   SUPPLY_SERVICE_FQDN="supply-rest-service.internal.com"
 
-elif [ "$DEPLOYMENT_TYPE" == "PRODUCTION" ]; then
+elif [ "$DEPLOYMENT_TYPE" == "PRODUCTION" ] || \
+     [ "$DEPLOYMENT_TYPE" == "TEST-PIPELINE" ] || \
+     [ "$DEPLOYMENT_TYPE" == "DEV-PIPELINE" ]; then
 
   # REVERSE_PROXY_FQDN and SUPPLY_SERVICE_FQDN are set by the ECS cluster
 
