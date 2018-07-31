@@ -30,17 +30,20 @@ except KeyError:
 
 # Load environment specific settings
 if DEPLOYMENT_TYPE == "DEV-LOCAL":
-    print("Loading DEV-LOCAL Settings")
+    print("Loading {0} Settings".format(DEPLOYMENT_TYPE))
     with open(os.path.join(BASE_DIR, "config-dev-local.yaml"), 'r') as stream:
         settings = yaml.load(stream)
 
 elif DEPLOYMENT_TYPE == "DEV-REMOTE":
-    print("Loading DEV-REMOTE Settings")
+    print("Loading {0} Settings".format(DEPLOYMENT_TYPE))
     with open(os.path.join(BASE_DIR, "config-dev-remote.yaml"), 'r') as stream:
         settings = yaml.load(stream)
 
-elif DEPLOYMENT_TYPE == "PRODUCTION":
-    print("Loading PRODUCTION Settings")
+elif (DEPLOYMENT_TYPE == "PRODUCTION" or
+        DEPLOYMENT_TYPE == "TEST-PIPELINE" or
+        DEPLOYMENT_TYPE == "DEV-PIPELINE"):
+
+    print("Loading {0} Settings".format(DEPLOYMENT_TYPE))
     with open(os.path.join(BASE_DIR, "config-production.yaml"), 'r') as stream:
         settings = yaml.load(stream)
 
