@@ -53,6 +53,17 @@ elif [ "$DEPLOYMENT_TYPE" == "PRODUCTION" ]; then
     exit 4
   fi
 
+  echo "REVERSE_PROXY_FQDN originally set to: $REVERSE_PROXY_FQDN"
+
+  # Process the passed in FQDN. Convert upper case to lower case, and strip off
+  # a trailing period. I'm trimming the last period off the FQDN since the
+  # cloud formation template requires dns zone names to have them.
+  REVERSE_PROXY_FQDN="$(echo $REVERSE_PROXY_FQDN | \
+    tr '[:upper:]' '[:lower:]' |  \
+    sed 's/\.$//g')"
+
+  echo "REVERSE_PROXY_FQDN updated to: $REVERSE_PROXY_FQDN"
+
   # install the correct certs
   echo "Copying $REVERSE_PROXY_FQDN certificates"
   cp /opt/reverse-proxy/server-certs/$REVERSE_PROXY_FQDN-*/server-private-key.pem $NGINX_PRIVATE_KEY
