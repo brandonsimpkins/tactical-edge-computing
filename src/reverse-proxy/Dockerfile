@@ -2,8 +2,8 @@ FROM nginx:1.15-alpine
 
 MAINTAINER Brandon Simpkins <brandonsimpkins@gmail.com>
 
-RUN apk update && \
- apk add libressl
+RUN apk --no-cache update && \
+ apk add libressl curl
 
 # delete default configuration files
 RUN rm /etc/nginx/conf.d/default.conf
