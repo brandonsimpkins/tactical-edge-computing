@@ -657,7 +657,7 @@ Resources:
         - FARGATE
       ExecutionRoleArn: !Ref rFargateTaskExecutionRole
       ContainerDefinitions:
-        - Name: reverse-proxy-container
+        - Name: official-fd-reverse-proxy
           Cpu: 1024
           Memory: 2048
           Image: !Sub '${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/official-fd-reverse-proxy'
@@ -667,8 +667,8 @@ Resources:
             - Name: DEPLOYMENT_TYPE
               Value: !Ref pDeploymentType
             - Name: REVERSE_PROXY_FQDN
-              Value: !Ref pReverseProxyDomainName
-              # Value: !Sub '${pDeploymentType}.${pPublicHostedZoneName}'
+              # Value: !Ref pReverseProxyDomainName
+              Value: !Sub '${pDeploymentType}.${pPublicHostedZoneName}'
             - Name: SUPPLY_SERVICE_FQDN
               Value: !Sub '${rPrivateSupplyServiceALB.DNSName}'
           LogConfiguration:
@@ -695,7 +695,7 @@ Resources:
           Subnets: [!Ref rPrivateSubnet1, !Ref rPrivateSubnet2]
       TaskDefinition: !Ref rFargateReverseProxyTaskDefinition
       LoadBalancers:
-        - ContainerName: reverse-proxy-container
+        - ContainerName: official-fd-reverse-proxy
           ContainerPort: 443
           TargetGroupArn: !Ref rFargateReverseProxyTargetGroup
     DependsOn:
@@ -718,7 +718,7 @@ Resources:
         - FARGATE
       ExecutionRoleArn: !Ref rFargateTaskExecutionRole
       ContainerDefinitions:
-        - Name: supply-service-container
+        - Name: official-fd-supply-rest-service
           Cpu: 1024
           Memory: 2048
           Image: !Sub '${AWS::AccountId}.dkr.ecr.us-east-1.amazonaws.com/official-fd-supply-rest-service'
@@ -759,7 +759,7 @@ Resources:
           Subnets: [!Ref rPrivateSubnet1, !Ref rPrivateSubnet2]
       TaskDefinition: !Ref rFargateSupplyServiceTaskDefinition
       LoadBalancers:
-        - ContainerName: supply-service-container
+        - ContainerName: official-fd-supply-rest-service
           ContainerPort: 80
           TargetGroupArn: !Ref rFargateSupplyServiceTargetGroup
     DependsOn:
