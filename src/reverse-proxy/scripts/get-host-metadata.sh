@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sleep 30
+# sleep 30
 
 echo '
 <!doctype html>
@@ -19,6 +19,9 @@ echo '
             font-size: 2em;
             font-weight: 400;
         }
+        div {
+            margin: 10px 0 0 50px;
+        }
     </style>
 </head>
 <body>
@@ -30,23 +33,28 @@ echo '
 
 
 echo '
-<h1>AWS ECS Container  Metadata (fron 169.254.170.2)</h1>
-<table>
+<h1>AWS ECS Container  Metadata (retrieved from http://169.254.170.2/v2/metadata/)</h1>
 '
 
-echo '<tr>'
-echo '<td>Metadata:</td>'
-echo "<td>$(curl --silent http://169.254.170.2/v2/metadata/)</td>"
-echo '</tr>'
+# get the json request data, and replace '{' with divs, let the margins format it
+# --silent
+METADATA=$(curl --connect-timeout 30 'http://169.254.170.2/v2/metadata/')
 
-echo '</table>'
+if [ $? -ne 0 ]; then
+  echo '<p>Failed to retrieve container metadata</p>'
+else
+  echo $METADATA | \
+    sed 's#{#\n<div>\n#g' | \
+    sed 's#}#\n</div>\n#g' | \
+    sed 's#,#<br />\n#g'
+fi
 
 #
 # Get Host Metadata
 #
 
 echo '
-<h1>AWS Host Metadata (from 169.254.169.254)</h1>
+<h1>AWS Host Metadata (retrieved from http://169.254.169.254/)</h1>
 <table>
 '
 
