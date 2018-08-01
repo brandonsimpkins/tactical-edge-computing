@@ -23,7 +23,7 @@ class UnitOfIssueSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = UnitOfIssue
-        fields = '__all__'
+        fields = ('code', 'description', 'url')
 
 
 class ItemSerializer(serializers.ModelSerializer):
