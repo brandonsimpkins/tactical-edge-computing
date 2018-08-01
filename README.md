@@ -53,8 +53,7 @@
       - Route 53
 04. Deploys onto local infrastructure (e.g. physical server, VM, snowball edge)
     that's running Docker (very similar to local development deployment)..
-05. Developed on AWS Infrastructure. See [dev env setup procedures]
-    (#Local-Development-Settings)
+05. Developed on AWS Infrastructure. See [Development Setup Procedures](#local-development-settings)
     - [CodeBuild buildspec.yaml](buildspec.yaml)
     - [CodeBuild Static Analysis yaml file](static-analysis-buildspec.yaml)
 07. Cloud formation templates:
@@ -65,7 +64,7 @@
     - Script to generate a server certificate (from the self signed CA)
     - Script to generate a user certificate p12 (from the self signed CA)
 
-# Features (Not Checked Into Github)
+## Features (Not Checked Into Github)
 01. Stick built CI / CD Pipeline
 
 ## Future Features
@@ -74,6 +73,7 @@
 03. Pull certificates from a secure bucket in S3
 04. Store db account passwords in a parameter store
     - Optional use secrets manager to auto rotate RDS credentials
+05. CI / CD pipeline to create standalone deployment AMI that will run on a Snowball Edge.
 
 ## Accessing The Application
 01. Install Root CA onto your local computer.
