@@ -1,12 +1,11 @@
 # tactical-edge-computing
 
 ## Features
-01. "Cloud Native" application - See: [What Are Cloud-Native Applications?]
-    (https://pivotal.io/cloud-native)
+01. "Cloud Native" application - See: [What Are Cloud-Native Applications?](https://pivotal.io/cloud-native)
     - Created a supply management micro service to handle (issue, receipt,
       stow) operations (e.g. managing inventory).
-      - While the [Django Rest Framework]
-        (http://www.django-rest-framework.org/) might be a bit heavy for some
+      - While the [Django Rest Framework](http://www.django-rest-framework.org/)
+        might be a bit heavy for some
         to qualify as a "micro service", it provides the following great
         features that are definitely necessary at the enterprise level:
         - ORM / model layer which provides absrtraction from the relational
@@ -17,33 +16,51 @@
         - Generic views / template capabilties. Significatnly reduces
           boilerplate code.
         - User authentication and authorization.
-    - Created a reverse proxy layer to server static content / javascript
+    - Created a [NGINX](https://www.nginx.com/) reverse proxy layer to server static content / javascript
       based applications and route to the microservices.
       - Static content delivery (HTML + CSS)
       - Dynamic service routing
       - Simple HTTPS configuration and management
       - Built in HTTP request logging and forwarding
       - x509 based client authetication using custom issued user certificates
+    - Built on top of [Docker](https://www.docker.com/) to standardize deployments and simplify update managment.
+      - The rest service and reverse proxy applications are self contained.
+      - The docker images bring their own dependencies.
+      - The applications are isolated from the host OS layer which makes OS updates easier.
+      - Images are based on the [Alpine Linux Docker Image Distro](https://hub.docker.com/r/library/alpine/)
+        which produces extremely small docker image sizes.
+        ```
+        [ec2-user@farnsworth src]$ docker images
+        REPOSITORY            TAG                 IMAGE ID            CREATED             SIZE
+        fd-reverse-proxy      latest              fc7d5d528be6        42 minutes ago      26.7MB
+        supply-rest-service   latest              d32aedd2575d        19 hours ago        124MB
+        postgres              10.4-alpine         9406c495d689        3 weeks ago         40.2MB
+        ```
+      - Updates are sent out based on 'layer' updates which minimizes bandwidth required for updates.
+      - Updates can be deployed via physical media (e.g. DVDs)
 02. Deployment envrironment architecture diagrams:
     - [CI /  CD Pipeline](architecture-diagrams/ci-cd-architecture.png)
     - [Enterprise Deployment Architecture](enterprise-supply-architecture.png)
     - [Standalone Deployment Architecture](shipboard-supply-architecture.png)
 03. Deploys onto managed AWS infrastructure that provides a turnkey system
     administration experience.
-    - Cloud Formation
-    - CodeBuild / CodeDeploy / CodePipeline
-    - ECS fargate
-    - Multi-AZ Postgres RDS
-    - Route 53
+    - Different deployments schemes are managed through envrionment settings
+    - AWS Services Used
+      - Cloud Formation
+      - CodeBuild / CodeDeploy / CodePipeline
+      - ECS fargate
+      - Multi-AZ Postgres RDS
+      - Route 53
 04. Deploys onto local infrastructure (e.g. physical server, VM, snowball edge)
     that's running Docker (very similar to local development deployment)..
 05. Developed on AWS Infrastructure. See [dev env setup procedures]
     (#Local-Development-Settings)
+    - [CodeBuild buildspec.yaml](buildspec.yaml)
+    - [CodeBuild Static Analysis yaml file](static-analysis-buildspec.yaml)
 07. Cloud formation templates:
     - [Enterprise Application CF Template](cfn-templates/enterprise-app-vpc.template)
 06. Development tools and scripts
-    - Script to install the latest version of [Docker Compose]
-      (https://docs.docker.com/compose/)
+    - Script to install the latest version of [Docker Compose](https://docs.docker.com/compose/)
     - Script to generate a self signed CA
     - Script to generate a server certificate (from the self signed CA)
     - Script to generate a user certificate p12 (from the self signed CA)
@@ -68,47 +85,42 @@
 
 ## AWS Issues That Need Improvement
 
+To be fair, while these issues are annoying in development it seems that cloud
+formation and ECS err on the side of caution. No doubt, generating and apply
+change sets across distributed infrasture is a challenging task. I'm sure a
+slow 3 hour automatic rollback of serices is nice should a deployment go south.
+
 01. Ugh their python distro. makes me want to not use their virtualenv packages
     at all. Definitley not "Enterprise Ready"
     - See my [Python Complaints About VirtualENV on AWS](pip-install-error.txt)
       where I documented my issues with the PYTHON_INSTALL_LAYOUT environment
       variable setting.
-
 02. General lack of Fargate logging. When something goes wrong in ECS is is not
     very apparent what is going on. This problem is worse in Fargate. And it's
     even worse when you dont use Cloud Watch logs (the only log provide)! I had
     to learn that one the hard way.
-
 03. I'm not sure if this is still an issue or not, but a few weeks ago ECS was
     not logging when a ELB shutdown a container due to a healthcheck. When I
     and deploying my app via cloudformation it does. Will need to see if I can
     replicate the issue with code pipeline again. But with no notification
     about containers getting shut down due to health checks, the ECS / Fargate
     deployment will just constantly thrash between INITIAL and UNHEALTHY.
-
 04. Cloud formation deployments don't trigger a rollback when a ECS deployment
     fails. This is the craziest thing of all. Not only will your cloud
     formation deployment just spin waiting for ECS to finish (which doesn't
     happen when you break your deploymenr *cough* security group rules), BUT
     the default rollback timer is 3 hours! And you can't change it!
-
 05. Cloud formation and ECS don't always play nice together. When you try to
     roll back cloud formation changes wheile ECS is trying to stablize,
     cloud formation gets stuck. In trying to fix it I have had to (1) fix the
     issue causing the deployment failure (e.g. change security group rules),
     (2) update the service to have 0 deployed containers (3) trigger a stack
     delete / wait for a timeout.
-
 06. Configuration drift between existing cloud formation stack resources and
     the template is possible. Especially when you edit resources in the
     console. Appropriate steps should be take to prevent that.
     - A Blue / Green deployment model would certainly help with a constant
       refresh of the whole application vpc.
-
-To be fair, while these issues are annoying in development it seems that cloud
-formation and ECS err on the side of caution. No doubt, generating and apply
-change sets across distributed infrasture is a challenging task. I'm sure a
-slow 3 hour automatic rollback of serices is nice should a deployment go south.
 
 ## Local Development Settings
 
