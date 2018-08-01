@@ -16,6 +16,7 @@
         - Generic views / template capabilties. Significatnly reduces
           boilerplate code.
         - User authentication and authorization.
+        - Automatic formatting based on request content type
     - Created a [NGINX](https://www.nginx.com/) reverse proxy layer to server static content / javascript
       based applications and route to the microservices.
       - Static content delivery (HTML + CSS)
