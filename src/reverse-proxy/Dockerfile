@@ -10,6 +10,8 @@ RUN rm /etc/nginx/conf.d/default.conf
 
 RUN mkdir -p /etc/nginx/certs
 
+COPY user-ca-public-cert.pem /etc/nginx/certs
+
 COPY server-certs       /opt/reverse-proxy/server-certs
 COPY scripts            /opt/reverse-proxy/scripts
 COPY config-templates   /opt/reverse-proxy/config-templates
