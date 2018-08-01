@@ -23,20 +23,48 @@
       - Dynamic service routing
       - Simple HTTPS configuration and management
       - Built in HTTP request logging and forwarding
-
-02. Development tools and scripts
+      - x509 based client authetication using custom issued user certificates
+02. Deployment envrironment architecture diagrams:
+    - [CI /  CD Pipeline](architecture-diagrams/ci-cd-architecture.png)
+    - [Enterprise Deployment Architecture](enterprise-supply-architecture.png)
+    - [Standalone Deployment Architecture](shipboard-supply-architecture.png)
+03. Deploys onto managed AWS infrastructure that provides a turnkey system
+    administration experience.
+    - Cloud Formation
+    - CodeBuild / CodeDeploy / CodePipeline
+    - ECS fargate
+    - Multi-AZ Postgres RDS
+    - Route 53
+04. Deploys onto local infrastructure (e.g. physical server, VM, snowball edge)
+    that's running Docker (very similar to local development deployment)..
+05. Developed on AWS Infrastructure. See [dev env setup procedures]
+    (#Local-Development-Settings)
+07. Cloud formation templates:
+    - [Enterprise Application CF Template](cfn-templates/enterprise-app-vpc.template)
+06. Development tools and scripts
     - Script to install the latest version of [Docker Compose]
       (https://docs.docker.com/compose/)
     - Script to generate a self signed CA
     - Script to generate a server certificate (from the self signed CA)
     - Script to generate a user certificate p12 (from the self signed CA)
 
-
-
+# Features (Not Checked Into Github)
+01. Stick built CI / CD Pipeline
 
 ## Future Features
-01. X509 based client authentication (I'm *this* close)
-01. Create development server AMIs / bake in Cloud9.
+01. Cloud formation template for CI / CD Pipeline and Dev env
+02. Create development server AMIs / bake in Cloud9.
+03. Pull certificates from a secure bucket in S3
+04. Store db account passwords in a parameter store
+    - Optional use secrets manager to auto rotate RDS credentials
+
+## Accessing The Application
+01. Install Root CA onto your local computer.
+    - [simpkins.cloud Self Signed Root CA](certificates/App_User_Root_CA_1-2018-07-07_0041-public-cert.pem)
+    - [Install a Trusted Root CA on OSX](https://support.untangle.com/hc/en-us/articles/212220648-Manually-installing-root-certificate-on-Mac-OSX)
+    - [Install a Trusted Root CA on Windows](https://blogs.technet.microsoft.com/sbs/2008/05/08/installing-a-self-signed-certificate-as-a-trusted-root-ca-in-windows-vista/)
+02. Import a user p12 certificate into your profile.
+    - [Brandon Simpkins p12 Certificate](certificates/brandon-simpkins.p12)
 
 ## AWS Issues That Need Improvement
 
