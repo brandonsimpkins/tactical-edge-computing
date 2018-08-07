@@ -2,12 +2,17 @@ version: '3'
 
 services:
   supply-db:
-    image: postgres:10.4-alpine
+    image: supply-db
     environment:
       POSTGRES_DB: local_fd_supply_db
       POSTGRES_USER: local_fd_supply_db_user
       POSTGRES_PASSWORD: local_fd_supply_db_password
       PGDATA: /data/postgres-data
+    build:
+      context: ./supply-db
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
     volumes:
       - postgres-data:/data/postgres-data
       - postgres-db-dumps:/data/postgres-db-dumps
