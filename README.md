@@ -229,12 +229,25 @@ slow 3 hour automatic rollback of serices is nice should a deployment go south.
 
 
 ## TODO
+
+### Proxy Tier
 - Create reverse proxy and x509 auth for django app
-- Create container for processing backups / upload to s3?
-- Fix generated certs to include subject alt names for chrome security checks
-  - https://www.techrepublic.com/article/how-to-resolve-ssl-certificate-warnings-produced-by-the-latest-chrome-update/
+  - Current builds are not deploying due to the x509 client auth requirements
+  - Need to rework the SSL server configs
 - Create mechanism to securely pull certs from S3 on docker image build or
   container start.
+
+### Service Tier
+- Need to update django model to accommodate the replication columns?
+- Added model calls to SQS to send notifications (e.g. low inventory warnings)
+  to the enterprise application
+
+### Database Tier
+- Create customized postgres container to allow for configuration changes (e.g.
+  for replication settings).
+- Database replication to / from RDS
+- Switch to using secure SSL ports publicly for network comms
+- Create container for processing backups / upload to s3?
 
 ## Notes / Links
 - This looks like the real deal, setting up a nginx reverse proxy and
@@ -261,7 +274,8 @@ slow 3 hour automatic rollback of serices is nice should a deployment go south.
   - https://github.com/nathanpeck/aws-cloudformation-fargate/blob/master/service-stacks/private-subnet-public-loadbalancer.yml
 - Overview of conditional x509 authentication based on URL:
   -  https://fardog.io/blog/2017/12/30/client-side-certificate-authentication-with-nginx/
-
+- Ongoing Postgres data replication
+    - https://aws.amazon.com/blogs/database/migrate-postgresql-databases-and-perform-ongoing-replication-with-the-aws-database-migration-service/
 
 
 ## AWS CLI Command Reference:
