@@ -1,4 +1,4 @@
-FROM postgres:10.4-alpine
+FROM postgres:9.6.9-alpine
 
 MAINTAINER Brandon Simpkins <brandonsimpkins@gmail.com>
 
