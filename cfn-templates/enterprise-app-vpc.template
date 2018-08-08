@@ -534,7 +534,7 @@ Resources:
       VpcId: !Ref rVPC
       Port: 443
       Protocol: TCP
-      HealthCheckPath: /404.html
+      HealthCheckPath: /error-pages/404.html
       HealthCheckProtocol: HTTPS
       TargetType: ip
       TargetGroupAttributes:
