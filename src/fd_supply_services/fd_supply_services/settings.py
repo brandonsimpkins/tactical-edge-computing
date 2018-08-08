@@ -15,6 +15,7 @@ import yaml
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CONFIG_DIR = os.path.join(BASE_DIR, 'config')
 
 # read the deployment type fron the env variables
 try:
@@ -31,12 +32,12 @@ except KeyError:
 # Load environment specific settings
 if DEPLOYMENT_TYPE == "DEV-LOCAL":
     print("Loading {0} Settings".format(DEPLOYMENT_TYPE))
-    with open(os.path.join(BASE_DIR, "config-dev-local.yaml"), 'r') as stream:
+    with open(os.path.join(CONFIG_DIR, "dev-local.yaml"), 'r') as stream:
         settings = yaml.load(stream)
 
 elif DEPLOYMENT_TYPE == "DEV-REMOTE":
     print("Loading {0} Settings".format(DEPLOYMENT_TYPE))
-    with open(os.path.join(BASE_DIR, "config-dev-remote.yaml"), 'r') as stream:
+    with open(os.path.join(CONFIG_DIR, "dev-remote.yaml"), 'r') as stream:
         settings = yaml.load(stream)
 
 elif (DEPLOYMENT_TYPE == "PRODUCTION" or
@@ -44,7 +45,7 @@ elif (DEPLOYMENT_TYPE == "PRODUCTION" or
         DEPLOYMENT_TYPE == "DEV-PIPELINE"):
 
     print("Loading {0} Settings".format(DEPLOYMENT_TYPE))
-    with open(os.path.join(BASE_DIR, "config-production.yaml"), 'r') as stream:
+    with open(os.path.join(CONFIG_DIR, "production.yaml"), 'r') as stream:
         settings = yaml.load(stream)
 
     # TODO - storing database passwords in environment variables is not safe.
@@ -56,7 +57,7 @@ elif (DEPLOYMENT_TYPE == "PRODUCTION" or
 
 elif DEPLOYMENT_TYPE == "LOCAL-UTILS":
     print("Loading LOCAL-UTILS Settings")
-    with open(os.path.join(BASE_DIR, "config-local-utils.yaml"), 'r') as stream:
+    with open(os.path.join(CONFIG_DIR, "local-utils.yaml"), 'r') as stream:
         settings = yaml.load(stream)
 
 else:
