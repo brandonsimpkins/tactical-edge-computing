@@ -18,7 +18,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^supply/admin/', admin.site.urls),
-    url(r'^supply/api-auth/', include('rest_framework.urls')),
     url(r'^supply/item-service/', include('item_service.urls')),
     url(r'^supply/health-check/', include('health_check.urls')),
 ]
