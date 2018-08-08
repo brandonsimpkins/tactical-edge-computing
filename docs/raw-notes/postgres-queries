@@ -1,0 +1,403 @@
+[ec2-user@farnsworth fd_supply_services]$ docker-compose exec supply-rest-service /opt/fd-supply-services/manage.py
+
+Detected DEV-LOCAL Deployment Type
+
+Loading DEV-LOCAL Settings
+DEBUG set to True
+
+Printing Environment Variables:
+  ENV: DEPLOYMENT_TYPE=DEV-LOCAL
+  ENV: DJANGO_SETTINGS_MODULE=fd_supply_services.settings
+  ENV: GPG_KEY=0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D
+  ENV: HOME=/root
+  ENV: HOSTNAME=0c12d40beb27
+  ENV: LANG=C.UTF-8
+  ENV: PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  ENV: PYTHONUNBUFFERED=1
+  ENV: PYTHON_PIP_VERSION=10.0.1
+  ENV: PYTHON_VERSION=3.6.6
+  ENV: TERM=xterm
+
+Type 'manage.py help <subcommand>' for help on a specific subcommand.
+
+Available subcommands:
+
+[auth]
+    changepassword
+    createsuperuser
+
+[contenttypes]
+    remove_stale_contenttypes
+
+[django]
+    check
+    compilemessages
+    createcachetable
+    dbshell
+    diffsettings
+    dumpdata
+    flush
+    inspectdb
+    loaddata
+    makemessages
+    makemigrations
+    migrate
+    sendtestemail
+    shell
+    showmigrations
+    sqlflush
+    sqlmigrate
+    sqlsequencereset
+    squashmigrations
+    startapp
+    startproject
+    test
+    testserver
+
+[sessions]
+    clearsessions
+
+[staticfiles]
+    collectstatic
+    findstatic
+    runserver
+[ec2-user@farnsworth fd_supply_services]$ docker-compose exec supply-rest-service /opt/fd-supply-services/manage.py createsuperuser
+
+Detected DEV-LOCAL Deployment Type
+
+Loading DEV-LOCAL Settings
+DEBUG set to True
+
+Printing Environment Variables:
+  ENV: DEPLOYMENT_TYPE=DEV-LOCAL
+  ENV: DJANGO_SETTINGS_MODULE=fd_supply_services.settings
+  ENV: GPG_KEY=0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D
+  ENV: HOME=/root
+  ENV: HOSTNAME=0c12d40beb27
+  ENV: LANG=C.UTF-8
+  ENV: PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  ENV: PYTHONUNBUFFERED=1
+  ENV: PYTHON_PIP_VERSION=10.0.1
+  ENV: PYTHON_VERSION=3.6.6
+  ENV: TERM=xterm
+Username (leave blank to use 'root'):
+Email address: brandonsimpkins@gmail.com
+Password:
+Password (again):
+Superuser created successfully.
+[ec2-user@farnsworth fd_supply_services]$ ll
+total 52K
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:16 .
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:15 ..
+-rw-rw-r-- 1 ec2-user ec2-user  639 Jul 24 22:58 config-dev-local.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  654 Jul 23 17:43 config-dev-remote.yaml
+-rw------- 1 ec2-user ec2-user   85 Jul 24 23:02 config-local-utils.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  556 Jul 31 18:13 config-production.yaml
+-rw------- 1 ec2-user ec2-user  625 Aug  7 16:18 Dockerfile
+drwxrwxr-x 3 ec2-user ec2-user 4.0K Aug  8 12:26 fd_supply_services
+drwxr-xr-x 2 ec2-user ec2-user 4.0K Jul 26 16:44 health_check_storage_test
+drwxrwxr-x 4 ec2-user ec2-user 4.0K Aug  8 01:58 item_service
+-rwxrwxr-x 1 ec2-user ec2-user  830 Jul 23 17:43 manage.py
+-rw------- 1 ec2-user ec2-user  217 Aug  8 12:14 requirements.txt
+-rwx------ 1 ec2-user ec2-user  320 Jul 24 14:20 start-web-container.sh
+[ec2-user@farnsworth fd_supply_services]$ git statis
+git: 'statis' is not a git command. See 'git --help'.
+
+The most similar command is
+	status
+[ec2-user@farnsworth fd_supply_services]$ vim fd_supply_services/
+custom_drf_auth.py  __init__.py         __pycache__/        settings.py         urls.py             wsgi.py
+[ec2-user@farnsworth fd_supply_services]$ vim fd_supply_services/
+custom_drf_auth.py  __init__.py         __pycache__/        settings.py         urls.py             wsgi.py
+[ec2-user@farnsworth fd_supply_services]$ vim fd_supply_services/settings.py
+[ec2-user@farnsworth fd_supply_services]$ docker-compose exec supply-db psql
+psql: FATAL:  role "root" does not exist
+[ec2-user@farnsworth fd_supply_services]$ docker-compose exec supply-db^C
+[ec2-user@farnsworth fd_supply_services]$ cat config-dev-local.yaml
+
+database:
+
+  # note: changing these values will require you to delete the local postgres
+  # data volume. Assuming you have been using docker compose, you can delete it
+  # by using these commands:
+  #
+  # [ec2-user@bender src]$ docker-compose down
+  # [ec2-user@bender src]$ docker volume ls
+  # [ec2-user@bender src]$ docker volume rm src_postgres-data
+  #
+
+  description: Local database settings to connect to postgres container
+  engine: django.db.backends.postgresql
+  name: local_fd_supply_db
+  user: local_fd_supply_db_user
+  password: local_fd_supply_db_password
+  host: local-dev-supply-db.internal.com
+  port: 5432
+
+debug: True
+[ec2-user@farnsworth fd_supply_services]$ docker-compose exec supply-db psql -U local_fd_supply_db_user -h local-dev-supply-db.internal.com
+Password for user local_fd_supply_db_user:
+psql: FATAL:  database "local_fd_supply_db_user" does not exist
+[ec2-user@farnsworth fd_supply_services]$ docker-compose exec supply-db psql -U local_fd_supply_db_user -h local-dev-supply-db.internal.com -d local_fd_supply_db
+Password for user local_fd_supply_db_user:
+psql (9.6.9)
+Type "help" for help.
+
+local_fd_supply_db=# \list
+                                     List of databases
+        Name        |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
+--------------------+----------+----------+------------+------------+-----------------------
+ local_fd_supply_db | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ postgres           | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ template0          | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+                    |          |          |            |            | postgres=CTc/postgres
+ template1          | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+                    |          |          |            |            | postgres=CTc/postgres
+(4 rows)
+
+local_fd_supply_db=# \dt
+                           List of relations
+ Schema |            Name            | Type  |          Owner
+--------+----------------------------+-------+-------------------------
+ public | auth_group                 | table | local_fd_supply_db_user
+ public | auth_group_permissions     | table | local_fd_supply_db_user
+ public | auth_permission            | table | local_fd_supply_db_user
+ public | auth_user                  | table | local_fd_supply_db_user
+ public | auth_user_groups           | table | local_fd_supply_db_user
+ public | auth_user_user_permissions | table | local_fd_supply_db_user
+ public | awsdms_ddl_audit           | table | local_fd_supply_db_user
+ public | django_admin_log           | table | local_fd_supply_db_user
+ public | django_content_type        | table | local_fd_supply_db_user
+ public | django_migrations          | table | local_fd_supply_db_user
+ public | django_session             | table | local_fd_supply_db_user
+ public | item_service_item          | table | local_fd_supply_db_user
+ public | item_service_unitofissue   | table | local_fd_supply_db_user
+(13 rows)
+
+local_fd_supply_db=# SELECT * from auth_user
+local_fd_supply_db-# SELECt * FROM auth_user;
+ERROR:  syntax error at or near "SELECt"
+LINE 2: SELECt * FROM auth_user;
+        ^
+local_fd_supply_db=# SELECT * FROM auth_user;
+ id |                                   password                                    |          last_login           | is_superuser |                            username                             | first_name | last_name |           email           | is_staff | is_active |          date_joined
+----+-------------------------------------------------------------------------------+-------------------------------+--------------+-----------------------------------------------------------------+------------+-----------+---------------------------+----------+-----------+-------------------------------
+  2 | pbkdf2_sha256$36000$mHeo8Z7zPuok$BLp2qYKfe5UFIgDN6UJf0a7HsKfSR6bNjfRrSeflyy8= | 2018-08-08 12:35:32.950208+00 | t            | root                                                            |            |           | brandonsimpkins@gmail.com | t        | t         | 2018-08-08 12:33:58.366954+00
+  1 |                                                                               | 2018-08-08 12:35:32.974858+00 | f            | CN=Brandon Test Admin Account,OU=App User Cert,O=simpkins.cloud |            |           |                           | f        | t         | 2018-08-08 12:31:29.420496+00
+(2 rows)
+
+local_fd_supply_db=# vim
+local_fd_supply_db=#
+local_fd_supply_db=#
+local_fd_supply_db=# \quit
+[ec2-user@farnsworth fd_supply_services]$ vim fd_supply_services/
+custom_drf_auth.py  __init__.py         __pycache__/        settings.py         urls.py             wsgi.py
+[ec2-user@farnsworth fd_supply_services]$ vim fd_supply_services/urls.py
+[ec2-user@farnsworth fd_supply_services]$ ll
+total 52K
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:16 .
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:15 ..
+-rw-rw-r-- 1 ec2-user ec2-user  639 Jul 24 22:58 config-dev-local.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  654 Jul 23 17:43 config-dev-remote.yaml
+-rw------- 1 ec2-user ec2-user   85 Jul 24 23:02 config-local-utils.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  556 Jul 31 18:13 config-production.yaml
+-rw------- 1 ec2-user ec2-user  625 Aug  7 16:18 Dockerfile
+drwxrwxr-x 3 ec2-user ec2-user 4.0K Aug  8 12:49 fd_supply_services
+drwxr-xr-x 2 ec2-user ec2-user 4.0K Jul 26 16:44 health_check_storage_test
+drwxrwxr-x 4 ec2-user ec2-user 4.0K Aug  8 01:58 item_service
+-rwxrwxr-x 1 ec2-user ec2-user  830 Jul 23 17:43 manage.py
+-rw------- 1 ec2-user ec2-user  217 Aug  8 12:14 requirements.txt
+-rwx------ 1 ec2-user ec2-user  320 Jul 24 14:20 start-web-container.sh
+[ec2-user@farnsworth fd_supply_services]$ docker-compose exec supply-db psql -U local_fd_supply_db_user -h local-dev-supply-db.internal.com -d local_fd_supply_db
+Password for user local_fd_supply_db_user:
+psql: FATAL:  password authentication failed for user "local_fd_supply_db_user"
+[ec2-user@farnsworth fd_supply_services]$
+[ec2-user@farnsworth fd_supply_services]$
+[ec2-user@farnsworth fd_supply_services]$
+[ec2-user@farnsworth fd_supply_services]$ docker-compose exec supply-db sudo postgres -c 'psql'
+OCI runtime exec failed: exec failed: container_linux.go:348: starting container process caused "exec: \"sudo\": executable file not found in $PATH": unknown
+[ec2-user@farnsworth fd_supply_services]$ docker-compose exec supply-db sudo su postgres -c 'psql'
+OCI runtime exec failed: exec failed: container_linux.go:348: starting container process caused "exec: \"sudo\": executable file not found in $PATH": unknown
+[ec2-user@farnsworth fd_supply_services]$ ll
+total 52K
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:16 .
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:15 ..
+-rw-rw-r-- 1 ec2-user ec2-user  639 Jul 24 22:58 config-dev-local.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  654 Jul 23 17:43 config-dev-remote.yaml
+-rw------- 1 ec2-user ec2-user   85 Jul 24 23:02 config-local-utils.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  556 Jul 31 18:13 config-production.yaml
+-rw------- 1 ec2-user ec2-user  625 Aug  7 16:18 Dockerfile
+drwxrwxr-x 3 ec2-user ec2-user 4.0K Aug  8 12:49 fd_supply_services
+drwxr-xr-x 2 ec2-user ec2-user 4.0K Jul 26 16:44 health_check_storage_test
+drwxrwxr-x 4 ec2-user ec2-user 4.0K Aug  8 01:58 item_service
+-rwxrwxr-x 1 ec2-user ec2-user  830 Jul 23 17:43 manage.py
+-rw------- 1 ec2-user ec2-user  217 Aug  8 12:14 requirements.txt
+-rwx------ 1 ec2-user ec2-user  320 Jul 24 14:20 start-web-container.sh
+[ec2-user@farnsworth fd_supply_services]$ source ~/
+.bash_history                bin/                         enterprise-app-cfn.template  normal.txt                   python-3.6-flake8-env/       tactical-edge-computing/
+.bash_logout                 .cache/                      .gitconfig                   .pki/                        quickstart-compliance-nist/  .vim/
+.bash_profile                changes.patch                .git-credentials             .psql_history                .rnd                         .viminfo
+.bashrc                      dot-files/                   .lesshst                     python-3.6-django-env/       .ssh/                        .vimrc
+[ec2-user@farnsworth fd_supply_services]$ source ~/python-3.6-
+python-3.6-django-env/ python-3.6-flake8-env/
+[ec2-user@farnsworth fd_supply_services]$ source ~/python-3.6-django-env/bin/activate
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ cler
+-bash: cler: command not found
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ll
+total 52K
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:16 .
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:15 ..
+-rw-rw-r-- 1 ec2-user ec2-user  639 Jul 24 22:58 config-dev-local.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  654 Jul 23 17:43 config-dev-remote.yaml
+-rw------- 1 ec2-user ec2-user   85 Jul 24 23:02 config-local-utils.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  556 Jul 31 18:13 config-production.yaml
+-rw------- 1 ec2-user ec2-user  625 Aug  7 16:18 Dockerfile
+drwxrwxr-x 3 ec2-user ec2-user 4.0K Aug  8 12:49 fd_supply_services
+drwxr-xr-x 2 ec2-user ec2-user 4.0K Jul 26 16:44 health_check_storage_test
+drwxrwxr-x 4 ec2-user ec2-user 4.0K Aug  8 01:58 item_service
+-rwxrwxr-x 1 ec2-user ec2-user  830 Jul 23 17:43 manage.py
+-rw------- 1 ec2-user ec2-user  217 Aug  8 12:14 requirements.txt
+-rwx------ 1 ec2-user ec2-user  320 Jul 24 14:20 start-web-container.sh
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ clear
+
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ll
+total 52K
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:16 .
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:15 ..
+-rw-rw-r-- 1 ec2-user ec2-user  639 Jul 24 22:58 config-dev-local.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  654 Jul 23 17:43 config-dev-remote.yaml
+-rw------- 1 ec2-user ec2-user   85 Jul 24 23:02 config-local-utils.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  556 Jul 31 18:13 config-production.yaml
+-rw------- 1 ec2-user ec2-user  625 Aug  7 16:18 Dockerfile
+drwxrwxr-x 3 ec2-user ec2-user 4.0K Aug  8 12:49 fd_supply_services
+drwxr-xr-x 2 ec2-user ec2-user 4.0K Jul 26 16:44 health_check_storage_test
+drwxrwxr-x 4 ec2-user ec2-user 4.0K Aug  8 01:58 item_service
+-rwxrwxr-x 1 ec2-user ec2-user  830 Jul 23 17:43 manage.py
+-rw------- 1 ec2-user ec2-user  217 Aug  8 12:14 requirements.txt
+-rwx------ 1 ec2-user ec2-user  320 Jul 24 14:20 start-web-container.sh
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ll
+total 52K
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:16 .
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:15 ..
+-rw-rw-r-- 1 ec2-user ec2-user  639 Jul 24 22:58 config-dev-local.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  654 Jul 23 17:43 config-dev-remote.yaml
+-rw------- 1 ec2-user ec2-user   85 Jul 24 23:02 config-local-utils.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  556 Jul 31 18:13 config-production.yaml
+-rw------- 1 ec2-user ec2-user  625 Aug  7 16:18 Dockerfile
+drwxrwxr-x 3 ec2-user ec2-user 4.0K Aug  8 12:49 fd_supply_services
+drwxr-xr-x 2 ec2-user ec2-user 4.0K Jul 26 16:44 health_check_storage_test
+drwxrwxr-x 4 ec2-user ec2-user 4.0K Aug  8 01:58 item_service
+-rwxrwxr-x 1 ec2-user ec2-user  830 Jul 23 17:43 manage.py
+-rw------- 1 ec2-user ec2-user  217 Aug  8 12:14 requirements.txt
+-rwx------ 1 ec2-user ec2-user  320 Jul 24 14:20 start-web-container.sh
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ mkdir scripts
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ cd scripts/
+(python-3.6-django-env) [ec2-user@farnsworth scripts]$ ll
+total 8.0K
+drwx------ 2 ec2-user ec2-user 4.0K Aug  8 12:52 .
+drwxrwxr-x 6 ec2-user ec2-user 4.0K Aug  8 12:52 ..
+(python-3.6-django-env) [ec2-user@farnsworth scripts]$ cp ../fd_supply_services/settings.py create-admin.sh
+(python-3.6-django-env) [ec2-user@farnsworth scripts]$ cd ..
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ll
+total 56K
+drwxrwxr-x 6 ec2-user ec2-user 4.0K Aug  8 12:52 .
+drwxrwxr-x 5 ec2-user ec2-user 4.0K Aug  8 12:15 ..
+-rw-rw-r-- 1 ec2-user ec2-user  639 Jul 24 22:58 config-dev-local.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  654 Jul 23 17:43 config-dev-remote.yaml
+-rw------- 1 ec2-user ec2-user   85 Jul 24 23:02 config-local-utils.yaml
+-rw-rw-r-- 1 ec2-user ec2-user  556 Jul 31 18:13 config-production.yaml
+-rw------- 1 ec2-user ec2-user  625 Aug  7 16:18 Dockerfile
+drwxrwxr-x 3 ec2-user ec2-user 4.0K Aug  8 12:49 fd_supply_services
+drwxr-xr-x 2 ec2-user ec2-user 4.0K Jul 26 16:44 health_check_storage_test
+drwxrwxr-x 4 ec2-user ec2-user 4.0K Aug  8 01:58 item_service
+-rwxrwxr-x 1 ec2-user ec2-user  830 Jul 23 17:43 manage.py
+-rw------- 1 ec2-user ec2-user  217 Aug  8 12:14 requirements.txt
+drwx------ 2 ec2-user ec2-user 4.0K Aug  8 12:53 scripts
+-rwx------ 1 ec2-user ec2-user  320 Jul 24 14:20 start-web-container.sh
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ cat config-dev-local.yaml
+
+database:
+
+  # note: changing these values will require you to delete the local postgres
+  # data volume. Assuming you have been using docker compose, you can delete it
+  # by using these commands:
+  #
+  # [ec2-user@bender src]$ docker-compose down
+  # [ec2-user@bender src]$ docker volume ls
+  # [ec2-user@bender src]$ docker volume rm src_postgres-data
+  #
+
+  description: Local database settings to connect to postgres container
+  engine: django.db.backends.postgresql
+  name: local_fd_supply_db
+  user: local_fd_supply_db_user
+  password: local_fd_supply_db_password
+  host: local-dev-supply-db.internal.com
+  port: 5432
+
+debug: True
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ docker-compose exec supply-db psql -U local_fd_supply_db_user -h local-dev-supply-db.internal.com -d local_fd_supply_db
+Password for user local_fd_supply_db_user:
+psql (9.6.9)
+Type "help" for help.
+
+local_fd_supply_db=# \dt
+                           List of relations
+ Schema |            Name            | Type  |          Owner
+--------+----------------------------+-------+-------------------------
+ public | auth_group                 | table | local_fd_supply_db_user
+ public | auth_group_permissions     | table | local_fd_supply_db_user
+ public | auth_permission            | table | local_fd_supply_db_user
+ public | auth_user                  | table | local_fd_supply_db_user
+ public | auth_user_groups           | table | local_fd_supply_db_user
+ public | auth_user_user_permissions | table | local_fd_supply_db_user
+ public | awsdms_ddl_audit           | table | local_fd_supply_db_user
+ public | django_admin_log           | table | local_fd_supply_db_user
+ public | django_content_type        | table | local_fd_supply_db_user
+ public | django_migrations          | table | local_fd_supply_db_user
+ public | django_session             | table | local_fd_supply_db_user
+ public | item_service_item          | table | local_fd_supply_db_user
+ public | item_service_unitofissue   | table | local_fd_supply_db_user
+(13 rows)
+
+local_fd_supply_db=# SELECT * FROM auth_user;
+ id |                                   password                                    |          last_login           | is_superuser |                            username                             | first_name | last_name |           email           | is_staff | is_active |          date_joined
+----+-------------------------------------------------------------------------------+-------------------------------+--------------+-----------------------------------------------------------------+------------+-----------+---------------------------+----------+-----------+-------------------------------
+  2 | pbkdf2_sha256$36000$mHeo8Z7zPuok$BLp2qYKfe5UFIgDN6UJf0a7HsKfSR6bNjfRrSeflyy8= | 2018-08-08 12:35:32.950208+00 | t            | root                                                            |            |           | brandonsimpkins@gmail.com | t        | t         | 2018-08-08 12:33:58.366954+00
+  1 |                                                                               | 2018-08-08 12:35:32.974858+00 | f            | CN=Brandon Test Admin Account,OU=App User Cert,O=simpkins.cloud |            |           |                           | f        | t         | 2018-08-08 12:31:29.420496+00
+(2 rows)
+
+local_fd_supply_db=# UPDATE auth_user SET is_superuser = t WHERE username = 'CN=Brandon Test Admin Account,OU=App User Cert,O=simpkins.cloud'
+local_fd_supply_db-# UPDATE auth_user SET is_superuser = t WHERE username = 'CN=Brandon Test Admin Account,OU=App User Cert,O=simpkins.cloud';
+ERROR:  syntax error at or near "UPDATE"
+LINE 2: UPDATE auth_user SET is_superuser = t WHERE username = 'CN=B...
+        ^
+local_fd_supply_db=# UPDATE auth_user SET is_superuser = t
+local_fd_supply_db-# WHERE username = 'CN=Brandon Test Admin Account,OU=App User Cert,O=simpkins.cloud';
+ERROR:  column "t" does not exist
+LINE 1: UPDATE auth_user SET is_superuser = t
+                                            ^
+local_fd_supply_db=# UPDATE auth_user SET is_superuser = 't'
+local_fd_supply_db=#
+local_fd_supply_db=#
+local_fd_supply_db=# Brandon Test Admin Account,OU=App User Cert,O=simpkins.clou
+local_fd_supply_db=#
+local_fd_supply_db=#
+local_fd_supply_db=#
+local_fd_supply_db=#
+local_fd_supply_db=# UPDATE auth_user SET is_superuser = 't'
+local_fd_supply_db-# WHERE username = 'CN=Brandon Test Admin Account,OU=App User Cert,O=simpkins.cloud';
+UPDATE 1
+local_fd_supply_db=#
+local_fd_supply_db=#
+local_fd_supply_db=# SELECt *  FROM auth_user;
+ id |                                   password                                    |          last_login           | is_superuser |                            username                             | first_name | last_name |           email           | is_staff | is_active |          date_joined
+----+-------------------------------------------------------------------------------+-------------------------------+--------------+-----------------------------------------------------------------+------------+-----------+---------------------------+----------+-----------+-------------------------------
+  2 | pbkdf2_sha256$36000$mHeo8Z7zPuok$BLp2qYKfe5UFIgDN6UJf0a7HsKfSR6bNjfRrSeflyy8= | 2018-08-08 12:35:32.950208+00 | t            | root                                                            |            |           | brandonsimpkins@gmail.com | t        | t         | 2018-08-08 12:33:58.366954+00
+  1 |                                                                               | 2018-08-08 12:35:32.974858+00 | t            | CN=Brandon Test Admin Account,OU=App User Cert,O=simpkins.cloud |            |           |                           | f        | t         | 2018-08-08 12:31:29.420496+00
+(2 rows)
+
+local_fd_supply_db=# UPDATE auth_user SET is_staff = 't'
+local_fd_supply_db-# WHERE username = 'CN=Brandon Test Admin Account,OU=App User Cert,O=simpkins.cloud';
+UPDATE 1
+local_fd_supply_db=#
