@@ -1,4 +1,20 @@
 
+# These settings are ideal for a developer running ./manage.py on the command
+# line. The database settings are configured to connect to the 'DEV-LOCAL'
+# database running through docker-compose. This allows the developer to easily
+# interact with the database without having to do it through the
+# supply-rest-service container.
+
+database:
+
+  description: Local database settings to connect to postgres container
+  engine: django.db.backends.postgresql
+  name: local_fd_supply_db
+  user: local_fd_supply_db_user
+  password: local_fd_supply_db_password
+  host: localhost
+  port: 5432
+
 debug: False
 
 collect-static:
