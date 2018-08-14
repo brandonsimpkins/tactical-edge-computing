@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# Started with the Gist here as a base:
+# https://gist.github.com/czardoz/b8bb58ad10f4063209bd
+
+# Note: This script doesn't actually check the precommit changes, it checks the
+# modified files to see if they contain AWS keys. This is a subtle difference
+# and will likely cause issues, if there is a false positive checked in.
+
+# Interesting SO article about multiple pre-commit hooks for git:
+# https://stackoverflow.com/questions/26624368/handle-multiple-pre-commit-hooks
+
+# Set color escape variables
+export color_green="\033[0;32m"
+export color_yellow="\033[0;33m"
+export color_reset="\033[0m"
+
+echo -e "Running the ${color_green}$(basename $0)${color_reset} hook."
+
+# default to comparing against the HEAD revision
+DIFF_REVISION=HEAD
+
+# make sure there is a HEAD revision...
+if [ git rev-parse --verify HEAD >/dev/null 2>&1 ]; then
+
+  # If there isn't a HEAD revision, compare against a empty tree object
+  DIFF_REVISION=$(git hash-object -t tree /dev/null)
+fi
+
+# get the lost of changed files to verify
+CHANGED_FILES=$(git diff --cached --name-only $DIFF_REVISION)
+
+# unnecessary in the context of getting run during a commit, since git won't
+# invoke the pre-commit hook with no changes. It is useful for testing though.
+if [ "$CHANGED_FILES" ]; then
+
+  # Pulled grep regex patterns from this AWS Security blog post:
+  # https://aws.amazon.com/blogs/security/a-safer-way-to-distribute-aws-credentials-to-ec2/
+
+  # Note: the regex patterns use look ahead matching to *try* to help
+  # distinguish the keys from other Base64 strings.
+
+  ACCESS_KEY_IDS=$(grep -RP --with-filename --line-number --color=always \
+    '(?<![A-Z0-9])[A-Z0-9]{20}(?![A-Z0-9])' $CHANGED_FILES)
+
+  SECRET_KEYS=$(grep -RP --with-filename --line-number --color=always \
+    '(?<![A-Za-z0-9/+=])[A-Za-z0-9/+=]{40}(?![A-Za-z0-9/+=])' $CHANGED_FILES)
+
+  # if either check found something...
+  if [ "$ACCESS_KEY_IDS" ] || [ "$SECRET_KEYS" ]; then
+
+    echo
+    echo -e "${color_yellow}[WARNING]${color_reset}"\
+      "Possible AWS Access / Secret Keys have been found."
+    echo
+
+    # print potential access keys
+    if [ "$ACCESS_KEY_IDS" ]; then
+      echo "=========== Possible AWS Access Key IDs ==========="
+      echo "$ACCESS_KEY_IDS"
+      echo
+    fi
+
+    # print potential secret keys
+    if [ "$SECRET_KEYS" ]; then
+      echo "=========== Possible AWS Secret Access Keys ==========="
+      echo "$SECRET_KEYS"
+      echo ""
+    fi
+
+    # make sure the user REALLY wants to commit the changes
+    while true; do
+
+      # Note: This is a bash-ism. Coloring the prompt requires escaping the
+      # color sequences, and using Bash's ANSI-C Quoting feature the most
+      # readable way to do it. Much more prefereable to having to type in a
+      # control sequence in vim, which would not be copy/paste friendly..
+      read -p $'\e[33m[WARNING]\e[0m Possible AWS keys found. Commit files anyway? (y/N) ' RESPONSE
+
+      # default response is to not check in changes
+      if [ "$RESPONSE" = "" ]; then
+        RESPONSE='N'
+      fi
+
+      # process the user response
+      case $RESPONSE in
+        [Yy]) exit 0 ;;
+        [Nn]) exit 1 ;;
+        *)    echo "Please answer y or n for yes or no." ;;
+      esac
+    done
+
+  fi
+fi
+
+# exit successfully since there were no potential AWS access / secret keys
+exit 0
