@@ -68,6 +68,9 @@ if [ "$CHANGED_FILES" ]; then
       echo ""
     fi
 
+    # allow user input for the pre-commit hook
+    exec < /dev/tty
+
     # make sure the user REALLY wants to commit the changes
     while true; do
 
