@@ -34,7 +34,7 @@ Snowball Edge.
         /Users/bssimpk/tec-snowball-credentials/tec-snowball.cert
         /Users/bssimpk/tec-snowball-credentials/tec-snowball.manifest
         /Users/bssimpk/tec-snowball-credentials/tec-snowball.unlock_code
-        
+
         [bssimpk@MacBook tec-snowball-credentials]$ cat tec-snowball.unlock_code
         XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
         ```
@@ -54,7 +54,7 @@ don't work, check to make sure you aren't using the wrong CLI.
     Configuration will stored at /Users/bssimpk/.aws/snowball/config/snowball-edge.config
     Snowball Edge Manifest Path: /Users/bssimpk/tec-snowball-credentials/tec-snowball.manifest
     Unlock Code: XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
-    Default Endpoint: https://123.456.789.123
+    Default Endpoint: https://10.200.10.105
     ```
 
 I opted to create the named profile `TEC`, since I will be working with
@@ -78,12 +78,12 @@ AWS profile accordingly.
 
 01. Unlock the Snowball Edge:
     ```
-    [bssimpk@MacBook ~]$ snowballEdge --profile TEC unlock-device
+    [bssimpk@MacBook ~]$ snowballEdge unlock-device --profile TEC
     Your Snowball Edge device is unlocking. You may determine the unlock state of your device using the describe-device command. Your Snowball Edge device will be available for use when it is in the UNLOCKED state.
     ```
 02. Verify that you can interact with services running on the Snowball Edge:
     ```
-    [bssimpk@MacBook ~]$ snowballEdge --profile TEC list-services
+    [bssimpk@MacBook ~]$ snowballEdge list-services --profile TEC
     {
       "ServiceIds" : [ "s3", "ec2", "fileinterface" ]
     }
@@ -93,21 +93,21 @@ AWS profile accordingly.
 We will need to use the `snowballEdge` CLI to obtain the credentials to interact with the
 
 
-02. Obtain an _Access Key_ from the Snowball Edge:
+01. Obtain an **Access Key** from the Snowball Edge:
     ```
-    [bssimpk@MacBook ~]$ snowballEdge list-access-keys
+    [bssimpk@MacBook ~]$ snowballEdge list-access-keys --profile TEC
     {
       "AccessKeyIds" : [ "ABCDEFGHIJKLMNOPQRST" ]
     }
     ```
-03. Obtain the matching _Secret Access Key_ from the Snowball Edge:
+02. Obtain the matching **Secret Access Key** from the Snowball Edge:
     ```
-    [bssimpk@MacBook ~]$ snowballEdge get-secret-access-key --access-key-id ABCDEFGHIJKLMNOPQRST --endpoint https://10.200.10.105 --manifest-file manifest.bin --unlock-code $(cat unlock-code.txt)
+    [bssimpk@MacBook ~]$ snowballEdge get-secret-access-key --profile TEC --access-key-id ABCDEFGHIJKLMNOPQRST
     [snowballEdge]
     aws_access_key_id = ABCDEFGHIJKLMNOPQRST
     aws_secret_access_key = 0123456789abcdefghijklmnopqrstuvxyz01234
     ```
-04. Save the keys in a _Named Profile_ for the AWS CLI:
+03. Save the keys in a **Named Profile** for the AWS CLI:
     ```
     bssimpk@MacBook ~]$ aws configure --profile TEC
     AWS Access Key ID [None]: ABCDEFGHIJKLMNOPQRST
@@ -117,30 +117,11 @@ We will need to use the `snowballEdge` CLI to obtain the credentials to interact
     ```
     * You need to specify a region in the profile, even though it doesn't
       actually get used.
-    * You can view your _Named Profile_ configuration by running:
+    * You can view your **Named Profile** configuration by running:
       ```
       aws configure list --profile TEC
       ```
-05. Verify That you can interact with the EC2 services on the Snowball Edge
-    though the AWS CLI:
-    ```
-    [bssimpk@MacBook ~]$ aws ec2 describe-instances --profile TEC --endpoint http://10.200.10.105:8008
-    {
-        "Reservations": []
-    }
-    ```
-
-06. List the certs
-    * https://docs.aws.amazon.com/snowball/latest/developer-guide/using-client-commands.html#snowball-edge-certificates-cli
-    ```
-    [bssimpk@MacBook ~]$ snowballEdge list-certificates
-    {
-      "Certificates" : [ {
-        "CertificateArn" : "arn:aws:snowball-device:::certificate/7db3d80001d7d2b71a04ec0d4940775c",
-        "SubjectAlternativeNames" : [ "10.200.10.105" ]
-      } ]
-    }
-    ```
+04. Find the **CertificateArn** for the snowball edge certificate:
     ```
     [bssimpk@MacBook ~]$ snowballEdge describe-service --service-id ec2
     {
@@ -162,14 +143,36 @@ We will need to use the `snowballEdge` CLI to obtain the credentials to interact
       } ]
     }
     ```
-07. Get the cert form the snowball
-08. Add the cert to the profile
+05. Get the certificate used by the EC2 service and save it to a file:
     ```
-    [bssimpk@MacBook ~]$ aws configure set snowballEdge.ca_bundle /Users/bssimpk/Desktop/tec-snowball-job-2-uswest2.cert.pem
-    [bssimpk@MacBook ~]$
+    [bssimpk@MacBook ~]$ snowballEdge get-certificate --profile TEC --certificate-arn arn:aws:snowball-device:::certificate/7db3d80001d7d2b71a04ec0d4940775c > tec-snowball.cert
     ```
-09. use HTTPS endpoints in the future
 
+    I saved the certificate in the same location as the manifest and the unlock codes.
+
+    ```
+    [bssimpk@MacBook tec-snowball-credentials]$ find $(pwd)
+    /Users/bssimpk/tec-snowball-credentials
+    /Users/bssimpk/tec-snowball-credentials/tec-snowball.cert
+    /Users/bssimpk/tec-snowball-credentials/tec-snowball.manifest
+    /Users/bssimpk/tec-snowball-credentials/tec-snowball.unlock_code
+    ```
+06. Add the Snowball Edge certificate to the `aws` CLI `TEC` profile to trust
+    HTTPS connections.
+    ```
+    [bssimpk@MacBook ~]$ aws configure --profile TEC set ca_bundle /Users/bssimpk/tec-snowball-credentials/tec-snowball.cert
+    ```
+    Note: the [instructions for associating certificates with a profile](https://docs.aws.amazon.com/snowball/latest/developer-guide/using-adapter.html#adapter-credentials)
+    do not appear to be correct. I was able to correctly add the `ca_bundle`
+    setting to my `TEC` profile with the command above.
+07. Verify That you can interact with the EC2 services on the Snowball Edge
+    though the AWS CLI using the HTTPS protocol:
+    ```
+    [bssimpk@MacBook ~]$ aws ec2 --profile TEC describe-instances --endpoint https://10.200.10.105:8243
+    {
+        "Reservations": []
+    }
+    ```
 
 ### Create an EC2 Instance
 At it's most basic, when you create a EC2 instance on a Snowball Edge you need
@@ -184,7 +187,7 @@ To create a EC2 instance and be able to connect to it:
 01. List the images available on the Snowball Edge and find the `ImageId` for
     the AMI you want to use:
     ```
-    [bssimpk@MacBook ~]$ aws --profile TEC ec2 describe-images --endpoint https://10.200.10.105:8243 --ca-bundle tec-snowball-job-2-uswest2.cert.pem
+    [bssimpk@MacBook ~]$ aws ec2 --profile TEC describe-images --endpoint https://10.200.10.105:8243
     {
         "Images": [
             {
@@ -201,7 +204,7 @@ To create a EC2 instance and be able to connect to it:
     In this case, my `ImageId` I want to use is `s.ami-07f9de7f`
 02. Run an EC2 instance using the desired AMI `ImageId`:
     ```
-    [bssimpk@MacBook ~]$ aws --profile TEC ec2 run-instances --image-id s.ami-07f9de7f --count 1 --instance-type sbe1.xlarge  --endpoint https://10.200.10.105:8243 --ca-bundle tec-snowball-job-2-uswest2.cert.pem
+    [bssimpk@MacBook ~]$ aws ec2 --profile TEC run-instances --image-id s.ami-07f9de7f --count 1 --instance-type sbe1.xlarge  --endpoint https://10.200.10.105:8243
     {
         "Instances": [
             {
@@ -232,7 +235,7 @@ To create a EC2 instance and be able to connect to it:
 03. Get the `PhysicalNetworkInterfaceId` for the active Physical Network
     Interface.
     ```
-    [bssimpk@MacBook ~]$ snowballEdge --profile TEC describe-device
+    [bssimpk@MacBook ~]$ snowballEdge describe-device --profile TEC
     {
       "DeviceId" : "JID36036a19-29e4-41df-bf95-fe1caa5e178f",
       "UnlockStatus" : {
@@ -269,7 +272,7 @@ To create a EC2 instance and be able to connect to it:
     }
     ```
     In my case, I am using the `RJ45` Physical Network Interface and the
-    `PhysicalNetworkInterfaceId` I need to use is `s.ni-8b34890878bc0fac`
+    `PhysicalNetworkInterfaceId` I need to use is `s.ni-8b34890878bc0facc`
 04. Create a virtual network interface associated with the active physical
     network interface.
     ```
@@ -321,4 +324,66 @@ To create a EC2 instance and be able to connect to it:
         ]
     }
     ```
+
+### Other Management Commands
+You can find the documentation for the `aws ec2` CLI commands available
+on the Snowball Edge
+[here](https://docs.aws.amazon.com/snowball/latest/developer-guide/using-ec2-endpoint.html).
+
+You can find the documentation for the `snowballEdge` CLI commands
+[here](https://docs.aws.amazon.com/snowball/latest/developer-guide/using-client-commands.html).
+
+
+* To list the existing virtual network interfaces:
+  ```
+  snowballEdge describe-virtual-network-interfaces --profile TEC
+  {
+    "VirtualNetworkInterfaces" : [ {
+      "VirtualNetworkInterfaceArn" : "arn:aws:snowball-device:::interface/s.ni-89d5fe0df8668e838",
+      "PhysicalNetworkInterfaceId" : "s.ni-8b34890878bc0facc",
+      "IpAddressAssignment" : "DHCP",
+      "IpAddress" : "10.200.10.171",
+      "Netmask" : "255.255.252.0",
+      "DefaultGateway" : "10.200.10.1",
+      "MacAddress" : "3e:81:c8:ad:28:1c"
+    } ]
+  }
+  ```
+* To start EC2 instances on the Snowball Edge:
+
+  Get the `InstanceId` from the output of the `aws ec2 describe-instances` command.
+
+  Note: You need to associate a public IP address to the EC2 instance after starting it.
+
+  ```
+  [bssimpk@MacBook ~]$ aws ec2 start-instances --profile TEC --endpoint https://10.200.10.126:8243 --instance-ids s.i-836058c13ba4da0b8
+  {
+      "StartingInstances": [
+          {
+              "InstanceId": "s.i-836058c13ba4da0b8",
+              "CurrentState": {
+                  "Code": 0,
+                  "Name": "pending"
+              },
+              "PreviousState": {
+                  "Code": 80,
+                  "Name": "stopped"
+              }
+          }
+      ]
+  }
+  ```
+* To stop EC2 instances on the Snowball Edge:
+
+  Get the `InstanceId` from the output of the `aws ec2 describe-instances` command.
+
+  ```
+  [bssimpk@MacBook ~]$ aws ec2 stop-instances --profile TEC --endpoint https://10.200.10.126:8243 --instance-ids s.i-836058c13ba4da0b8
+  ```
+
+
+
+
+
+
 
