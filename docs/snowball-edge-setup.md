@@ -10,46 +10,45 @@ and configure a Snowball Edge using EC2 services.
 Note: These procedures assume that you have already ordered and recieved a
 Snowball Edge.
 
-#### Snowball Setup
+### Initialize the Snowball Edge
 01. Connect network and power cables to the Snowball Edge and power the device
     on.
-    * Note: these procedures assume that the Snowball Edge can obtain IP
+    * The device is quite loud for the first 10 - 15 minutes.
+    * These procedures assume that the Snowball Edge can obtain IP
       addresses through DHCP.
     * See the
       [Snowball Edge - Getting Started](https://docs.aws.amazon.com/snowball/latest/developer-guide/getting-started-connect.html)
       documentation if you have issues obtaining network connectivity.
-    * Note: The dvice is fairly noisy for the first 10 - 15 minutes.
-01. Download and install the appropriate [Snowball Edge Client](https://aws.amazon.com/snowball-edge/resources/)
+02. Download and install the appropriate [Snowball Edge Client](https://aws.amazon.com/snowball-edge/resources/)
     * Note: The installation on MacOS left the client unusable since my root
       user `UMASK` is set to `0077` (as it should be). Setting my `UMASK` to
       `0022` worked fine for the install.
-02. Log into the AWS Console and go to the Snowball Service.
-03. In the _Job Dashboard_ expand the dropdown for the job you ordered the
-    snowball with, and click the _Get Credentials_ button.
-04. Save the _Client Unlock Code_ and download the _Manifest File_ to your
-    local computer.
-    * The _Client Unlock Code_ is a hypen seperated 25 character long hash that
-      looks like `XXXXX-XXXXX-XXXXX-XXXXX-XXXXX`
-    * I stored my credentials in my home directory like so:
-      ```
-      [bssimpk@MacBook tec-snowball-credentials]$ find $(pwd)
-      /Users/bssimpk/tec-snowball-credentials
-      /Users/bssimpk/tec-snowball-credentials/tec-snowball.cert
-      /Users/bssimpk/tec-snowball-credentials/tec-snowball.manifest
-      /Users/bssimpk/tec-snowball-credentials/tec-snowball.unlock_code
-      [bssimpk@MacBook tec-snowball-credentials]$ cat tec-snowball.unlock_code
-      XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
-      ```
-05. Once the Snowball Edge has powered on and established a network connection,
+03. Log into the **AWS Console** and go to the **Snowball** Service.
+    01. In the **Job Dashboard** expand the dropdown for the job you ordered the
+        snowball with, and click the **Get Credentials** button.
+    02. Save the **Client Unlock Code** and download the **Manifest File** to your
+        local computer. I stored my credentials in my home directory like so:
+        ```
+        [bssimpk@MacBook tec-snowball-credentials]$ find $(pwd)
+        /Users/bssimpk/tec-snowball-credentials
+        /Users/bssimpk/tec-snowball-credentials/tec-snowball.cert
+        /Users/bssimpk/tec-snowball-credentials/tec-snowball.manifest
+        /Users/bssimpk/tec-snowball-credentials/tec-snowball.unlock_code
+        
+        [bssimpk@MacBook tec-snowball-credentials]$ cat tec-snowball.unlock_code
+        XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
+        ```
+04. Once the Snowball Edge has powered on and established a network connection,
     get the IP address from the front panel display.
     * Commands below will reference the Snowball Edge IP Address as
       `10.200.10.105`
 
-#### Configure the Snowball Edge CLI
+### Configure the Snowball Edge CLI
 You will manage the Snowball Edge directly with the `snowballEdge` CLI. This is
-similar, but very different from the `aws` CLI.
+_deceptively similar_ to the `aws` CLI, but it is very different! If commands
+don't work, check to make sure you aren't using the wrong CLI.
 
-01. Create a _Named Profile_ for the `snowballEdge` CLI:
+01. Create a **Named Profile** for the `snowballEdge` CLI:
     ```
     [bssimpk@MacBook ~]$ snowballEdge configure --profile TEC
     Configuration will stored at /Users/bssimpk/.aws/snowball/config/snowball-edge.config
@@ -59,7 +58,8 @@ similar, but very different from the `aws` CLI.
     ```
 
 I opted to create the named profile `TEC`, since I will be working with
-numerous Snowball Edge devices.
+numerous Snowball Edge devices. I used the Manifest, Unlock Code, and
+public IP address obtained above.
 
 You can configure the default profile and remove the `--profile TEC` parameter
 from the `snowballEdge` commands below.
@@ -71,7 +71,7 @@ require the following parameters:
 * `--unlock-code ${unlock code}`
 
 
-#### Unlock The Snowball Edge
+### Unlock The Snowball Edge
 Once you unlock and initialize the Snowball Edge, you interact with it as if it
 is a local region. You will need to obatin the Access Keys and configure an
 AWS profile accordingly.
@@ -89,7 +89,7 @@ AWS profile accordingly.
     }
     ```
 
-#### Configure the AWS CLI
+### Configure the AWS CLI
 We will need to use the `snowballEdge` CLI to obtain the credentials to interact with the
 
 
@@ -171,7 +171,7 @@ We will need to use the `snowballEdge` CLI to obtain the credentials to interact
 09. use HTTPS endpoints in the future
 
 
-#### Create an EC2 Instance
+### Create an EC2 Instance
 At it's most basic, when you create a EC2 instance on a Snowball Edge you need
 to:
 
