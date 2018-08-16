@@ -79,7 +79,9 @@ AWS profile accordingly.
 01. Unlock the Snowball Edge:
     ```
     [bssimpk@MacBook ~]$ snowballEdge unlock-device --profile TEC
-    Your Snowball Edge device is unlocking. You may determine the unlock state of your device using the describe-device command. Your Snowball Edge device will be available for use when it is in the UNLOCKED state.
+    Your Snowball Edge device is unlocking. You may determine the unlock state of your device using
+    the describe-device command. Your Snowball Edge device will be available for use when it is in
+    the UNLOCKED state.
     ```
 02. Verify that you can interact with services running on the Snowball Edge:
     ```
@@ -102,7 +104,8 @@ We will need to use the `snowballEdge` CLI to obtain the credentials to interact
     ```
 02. Obtain the matching **Secret Access Key** from the Snowball Edge:
     ```
-    [bssimpk@MacBook ~]$ snowballEdge get-secret-access-key --profile TEC --access-key-id ABCDEFGHIJKLMNOPQRST
+    [bssimpk@MacBook ~]$ snowballEdge get-secret-access-key --profile TEC \
+      --access-key-id ABCDEFGHIJKLMNOPQRST
     [snowballEdge]
     aws_access_key_id = ABCDEFGHIJKLMNOPQRST
     aws_secret_access_key = 0123456789abcdefghijklmnopqrstuvxyz01234
@@ -145,7 +148,8 @@ We will need to use the `snowballEdge` CLI to obtain the credentials to interact
     ```
 05. Get the certificate used by the EC2 service and save it to a file:
     ```
-    [bssimpk@MacBook ~]$ snowballEdge get-certificate --profile TEC --certificate-arn arn:aws:snowball-device:::certificate/7db3d80001d7d2b71a04ec0d4940775c > tec-snowball.cert
+    [bssimpk@MacBook ~]$ snowballEdge get-certificate --profile TEC --certificate-arn \
+      arn:aws:snowball-device:::certificate/7db3d80001d7d2b71a04ec0d4940775c > tec-snowball.cert
     ```
 
     I saved the certificate in the same location as the manifest and the unlock codes.
@@ -160,7 +164,8 @@ We will need to use the `snowballEdge` CLI to obtain the credentials to interact
 06. Add the Snowball Edge certificate to the `aws` CLI `TEC` profile to trust
     HTTPS connections.
     ```
-    [bssimpk@MacBook ~]$ aws configure --profile TEC set ca_bundle /Users/bssimpk/tec-snowball-credentials/tec-snowball.cert
+    [bssimpk@MacBook ~]$ aws configure --profile TEC set ca_bundle \
+      /Users/bssimpk/tec-snowball-credentials/tec-snowball.cert
     ```
     Note: the [instructions for associating certificates with a profile](https://docs.aws.amazon.com/snowball/latest/developer-guide/using-adapter.html#adapter-credentials)
     do not appear to be correct. I was able to correctly add the `ca_bundle`
@@ -204,7 +209,8 @@ To create a EC2 instance and be able to connect to it:
     In this case, my `ImageId` I want to use is `s.ami-07f9de7f`
 02. Run an EC2 instance using the desired AMI `ImageId`:
     ```
-    [bssimpk@MacBook ~]$ aws ec2 --profile TEC run-instances --image-id s.ami-07f9de7f --count 1 --instance-type sbe1.xlarge  --endpoint https://10.200.10.105:8243
+    [bssimpk@MacBook ~]$ aws ec2 --profile TEC run-instances --image-id s.ami-07f9de7f \
+      --count 1 --instance-type sbe1.xlarge  --endpoint https://10.200.10.105:8243
     {
         "Instances": [
             {
@@ -276,7 +282,8 @@ To create a EC2 instance and be able to connect to it:
 04. Create a virtual network interface associated with the active physical
     network interface.
     ```
-    [bssimpk@MacBook ~]$ snowballEdge create-virtual-network-interface --ip-address-assignment DHCP --physical-network-interface-id s.ni-8b34890878bc0facc
+    [bssimpk@MacBook ~]$ snowballEdge create-virtual-network-interface --ip-address-assignment DHCP \
+      --physical-network-interface-id s.ni-8b34890878bc0facc
     {
       "VirtualNetworkInterface" : {
         "VirtualNetworkInterfaceArn" : "arn:aws:snowball-device:::interface/s.ni-89d5fe0df8668e838",
@@ -293,11 +300,12 @@ To create a EC2 instance and be able to connect to it:
     EC2 Instance.
 05. Associate the IP with the created EC2 Instance:
     ```
-    [bssimpk@MacBook ~]$ aws --profile TEC ec2 associate-address --endpoint https://10.200.10.105:8243 --ca-bundle tec-snowball-job-2-uswest2.cert.pem --public-ip 10.200.10.149 --instance-id s.i-836058c13ba4da0b8
+    [bssimpk@MacBook ~]$ aws ec2 --profile TEC associate-address --endpoint https://10.200.10.105:8243 \
+      --public-ip 10.200.10.149 --instance-id s.i-836058c13ba4da0b8
     ```
 06. Verify the status of the EC2 instance:
     ```
-    [bssimpk@MacBook ~]$ aws --profile TEC ec2 describe-instances --endpoint https://10.200.10.105:8243 --ca-bundle tec-snowball-job-2-uswest2.cert.pem
+    [bssimpk@MacBook ~]$ aws ec2 --profile TEC describe-instances --endpoint https://10.200.10.105:8243
     {
         "Reservations": [
             {
@@ -356,7 +364,8 @@ You can find the documentation for the `snowballEdge` CLI commands
   Note: You need to associate a public IP address to the EC2 instance after starting it.
 
   ```
-  [bssimpk@MacBook ~]$ aws ec2 start-instances --profile TEC --endpoint https://10.200.10.126:8243 --instance-ids s.i-836058c13ba4da0b8
+  [bssimpk@MacBook ~]$ aws ec2 start-instances --profile TEC --endpoint https://10.200.10.126:8243 \
+    --instance-ids s.i-836058c13ba4da0b8
   {
       "StartingInstances": [
           {
@@ -378,12 +387,7 @@ You can find the documentation for the `snowballEdge` CLI commands
   Get the `InstanceId` from the output of the `aws ec2 describe-instances` command.
 
   ```
-  [bssimpk@MacBook ~]$ aws ec2 stop-instances --profile TEC --endpoint https://10.200.10.126:8243 --instance-ids s.i-836058c13ba4da0b8
+  [bssimpk@MacBook ~]$ aws ec2 stop-instances --profile TEC --endpoint https://10.200.10.126:8243 \
+    --instance-ids s.i-836058c13ba4da0b8
   ```
-
-
-
-
-
-
 
