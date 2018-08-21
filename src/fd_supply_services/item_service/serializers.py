@@ -3,7 +3,7 @@ from rest_framework import serializers
 from item_service.models import Item, UnitOfIssue
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     """
     """
 
@@ -12,7 +12,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class UnitOfIssueSerializer(serializers.HyperlinkedModelSerializer):
+class UnitOfIssueSerializer(serializers.ModelSerializer):
     """
     """
     url = serializers.HyperlinkedIdentityField(
@@ -23,7 +23,7 @@ class UnitOfIssueSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = UnitOfIssue
-        fields = ('code', 'description', 'url')
+        fields = '__all__'
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -38,4 +38,3 @@ class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
         fields = '__all__'
-        # depth = 1
