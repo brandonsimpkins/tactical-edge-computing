@@ -1,0 +1,74 @@
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ./manage.py djangoshell
+Deployment Type not set! Defaulting to LOCAL-UTILS!
+Loading LOCAL-UTILS Settings
+DEBUG set to False
+/home/ec2-user/python-3.6-django-env/local/lib64/python3.6/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+  """)
+Unknown command: 'djangoshell'
+Type 'manage.py help' for usage.
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ./manage.py shell
+Deployment Type not set! Defaulting to LOCAL-UTILS!
+Loading LOCAL-UTILS Settings
+DEBUG set to False
+/home/ec2-user/python-3.6-django-env/local/lib64/python3.6/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+  """)
+Python 3.6.5 (default, Apr 26 2018, 00:14:31)
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-11)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> import item_service
+>>> import item_service.model
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+ModuleNotFoundError: No module named 'item_service.model'
+>>> from item_service.models import *
+>>> Invetory.get()
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+NameError: name 'Invetory' is not defined
+>>> Inventory.get()
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+AttributeError: type object 'Inventory' has no attribute 'get'
+>>> Inventory.objects.all()
+<QuerySet [<Inventory: INV ID - >]>
+>>> Inventory.objects.get(None)
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+  File "/home/ec2-user/python-3.6-django-env/local/lib/python3.6/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/ec2-user/python-3.6-django-env/local/lib/python3.6/site-packages/django/db/models/query.py", line 371, in get
+    clone = self.filter(*args, **kwargs)
+  File "/home/ec2-user/python-3.6-django-env/local/lib/python3.6/site-packages/django/db/models/query.py", line 784, in filter
+    return self._filter_or_exclude(False, *args, **kwargs)
+  File "/home/ec2-user/python-3.6-django-env/local/lib/python3.6/site-packages/django/db/models/query.py", line 802, in _filter_or_exclude
+    clone.query.add_q(Q(*args, **kwargs))
+  File "/home/ec2-user/python-3.6-django-env/local/lib/python3.6/site-packages/django/db/models/sql/query.py", line 1250, in add_q
+    clause, _ = self._add_q(q_object, self.used_aliases)
+  File "/home/ec2-user/python-3.6-django-env/local/lib/python3.6/site-packages/django/db/models/sql/query.py", line 1276, in _add_q
+    allow_joins=allow_joins, split_subq=split_subq,
+  File "/home/ec2-user/python-3.6-django-env/local/lib/python3.6/site-packages/django/db/models/sql/query.py", line 1151, in build_filter
+    arg, value = filter_expr
+TypeError: 'NoneType' object is not iterable
+>>> Inventory.objects.get(id=None)
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+  File "/home/ec2-user/python-3.6-django-env/local/lib/python3.6/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/home/ec2-user/python-3.6-django-env/local/lib/python3.6/site-packages/django/db/models/query.py", line 380, in get
+    self.model._meta.object_name
+item_service.models.DoesNotExist: Inventory matching query does not exist.
+>>> Inventory.objects.get(id="")
+<Inventory: INV ID - >
+>>> inv = Inventory.objects.get(id="")
+>>> inv.id=1223334
+>>> inv.save()
+>>> inv.id=1223444444444
+>>> inv.update()
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+AttributeError: 'Inventory' object has no attribute 'update'
+>>> Inventory.objects.filter(id="").update(id="22222222")
+1
+>>> exit()
+
