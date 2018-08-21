@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from item_service.models import Item, UnitOfIssue
+from item_service.models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -9,6 +9,19 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
+        fields = '__all__'
+
+class UnitIdentificationCodeSerializer(serializers.ModelSerializer):
+    """
+    """
+
+    url = serializers.HyperlinkedIdentityField(
+            view_name='uic-detail',
+            format='html',
+            lookup_field='uic')
+
+    class Meta:
+        model = UnitIdentificationCode
         fields = '__all__'
 
 

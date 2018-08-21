@@ -4,6 +4,21 @@ from __future__ import unicode_literals
 from django.db import models
 
 
+class UnitIdentificationCode(models.Model):
+    """
+    Represents a UIC which inventory and locations are tied to.
+    """
+    uic = models.CharField(max_length=6, primary_key=True)
+    description = models.CharField(max_length=255)
+    address = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ('uic',)
+
+    def __str__(self):
+        return "UIC - {0}".format(self.uic)
+
+
 class UnitOfIssue(models.Model):
     code = models.CharField(max_length=2, primary_key=True)
     description = models.CharField(max_length=16)

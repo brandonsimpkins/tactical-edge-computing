@@ -21,5 +21,10 @@ urlpatterns = [
     url(r'^unit-of-issue/(?P<code>[A-Z]+)/$',
         views.UnitOfIssueDetail.as_view(),
         name="unitofissue-detail"),
-
+    url(r'^uic/$',
+        views.UnitIdentificationCodeList.as_view(),
+        name="uic-list"),
+    url(r'^uic-detail/(?P<uic>[A-Z0-9]+)/$',
+        views.UnitIdentificationCodeDetail.as_view(),
+        name="uic-detail"),
 ]
