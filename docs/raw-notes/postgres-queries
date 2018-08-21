@@ -401,3 +401,148 @@ local_fd_supply_db=# UPDATE auth_user SET is_staff = 't'
 local_fd_supply_db-# WHERE username = 'CN=Brandon Test Admin Account,OU=App User Cert,O=simpkins.cloud';
 UPDATE 1
 local_fd_supply_db=#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ./manage.py shell
+Deployment Type not set! Defaulting to LOCAL-UTILS!
+Loading LOCAL-UTILS Settings
+DEBUG set to False
+/home/ec2-user/python-3.6-django-env/local/lib64/python3.6/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+  """)
+Python 3.6.5 (default, Apr 26 2018, 00:14:31)
+[GCC 4.8.5 20150623 (Red Hat 4.8.5-11)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> quit()
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ./manage.py dbshell
+Deployment Type not set! Defaulting to LOCAL-UTILS!
+Loading LOCAL-UTILS Settings
+DEBUG set to False
+/home/ec2-user/python-3.6-django-env/local/lib64/python3.6/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+  """)
+psql (9.6.8, server 9.6.9)
+Type "help" for help.
+
+local_fd_supply_db=# /list
+local_fd_supply_db-# \list
+                                     List of databases
+        Name        |  Owner   | Encoding |  Collate   |   Ctype    |   Access privileges
+--------------------+----------+----------+------------+------------+-----------------------
+ local_fd_supply_db | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ postgres           | postgres | UTF8     | en_US.utf8 | en_US.utf8 |
+ template0          | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+                    |          |          |            |            | postgres=CTc/postgres
+ template1          | postgres | UTF8     | en_US.utf8 | en_US.utf8 | =c/postgres          +
+                    |          |          |            |            | postgres=CTc/postgres
+(4 rows)
+
+local_fd_supply_db-# \dt local_fd_supply_db
+No matching relations found.
+local_fd_supply_db-# \dt
+                           List of relations
+ Schema |            Name            | Type  |          Owner
+--------+----------------------------+-------+-------------------------
+ public | auth_group                 | table | local_fd_supply_db_user
+ public | auth_group_permissions     | table | local_fd_supply_db_user
+ public | auth_permission            | table | local_fd_supply_db_user
+ public | auth_user                  | table | local_fd_supply_db_user
+ public | auth_user_groups           | table | local_fd_supply_db_user
+ public | auth_user_user_permissions | table | local_fd_supply_db_user
+ public | awsdms_ddl_audit           | table | local_fd_supply_db_user
+ public | django_admin_log           | table | local_fd_supply_db_user
+ public | django_content_type        | table | local_fd_supply_db_user
+ public | django_migrations          | table | local_fd_supply_db_user
+ public | django_session             | table | local_fd_supply_db_user
+ public | item_service_item          | table | local_fd_supply_db_user
+ public | item_service_unitofissue   | table | local_fd_supply_db_user
+(13 rows)
+
+local_fd_supply_db-# \dt +
+ERROR:  invalid regular expression: quantifier operand invalid
+local_fd_supply_db-# \dt+
+                                        List of relations
+ Schema |            Name            | Type  |          Owner          |    Size    | Description
+--------+----------------------------+-------+-------------------------+------------+-------------
+ public | auth_group                 | table | local_fd_supply_db_user | 0 bytes    |
+ public | auth_group_permissions     | table | local_fd_supply_db_user | 0 bytes    |
+ public | auth_permission            | table | local_fd_supply_db_user | 8192 bytes |
+ public | auth_user                  | table | local_fd_supply_db_user | 16 kB      |
+ public | auth_user_groups           | table | local_fd_supply_db_user | 0 bytes    |
+ public | auth_user_user_permissions | table | local_fd_supply_db_user | 0 bytes    |
+ public | awsdms_ddl_audit           | table | local_fd_supply_db_user | 40 kB      |
+ public | django_admin_log           | table | local_fd_supply_db_user | 8192 bytes |
+ public | django_content_type        | table | local_fd_supply_db_user | 8192 bytes |
+ public | django_migrations          | table | local_fd_supply_db_user | 16 kB      |
+ public | django_session             | table | local_fd_supply_db_user | 16 kB      |
+ public | item_service_item          | table | local_fd_supply_db_user | 0 bytes    |
+ public | item_service_unitofissue   | table | local_fd_supply_db_user | 0 bytes    |
+(13 rows)
+
+local_fd_supply_db-# \dt+ item_service_unitofissue
+                                      List of relations
+ Schema |           Name           | Type  |          Owner          |  Size   | Description
+--------+--------------------------+-------+-------------------------+---------+-------------
+ public | item_service_unitofissue | table | local_fd_supply_db_user | 0 bytes |
+(1 row)
+
+local_fd_supply_db-# SELECT *
+local_fd_supply_db-# FROM information_schema.columns
+local_fd_supply_db-# WHERE table_schema = 'your_schema'
+local_fd_supply_db-#   AND table_name   = 'your_table'
+local_fd_supply_db-# ;
+ERROR:  syntax error at or near "/"
+LINE 1: /list
+        ^
+local_fd_supply_db=# SELECT *
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name   = 'item_service_unitofissue';
+   table_catalog    | table_schema |        table_name        | column_name | ordinal_position | column_default | is_nullable |     data_type     | character_maximum_length | character_o
+ctet_length | numeric_precision | numeric_precision_radix | numeric_scale | datetime_precision | interval_type | interval_precision | character_set_catalog | character_set_schema | chara
+cter_set_name | collation_catalog | collation_schema | collation_name | domain_catalog | domain_schema | domain_name |    udt_catalog     | udt_schema | udt_name | scope_catalog | scope_
+schema | scope_name | maximum_cardinality | dtd_identifier | is_self_referencing | is_identity | identity_generation | identity_start | identity_increment | identity_maximum | identity_m
+inimum | identity_cycle | is_generated | generation_expression | is_updatable
+--------------------+--------------+--------------------------+-------------+------------------+----------------+-------------+-------------------+--------------------------+------------
+------------+-------------------+-------------------------+---------------+--------------------+---------------+--------------------+-----------------------+----------------------+------
+--------------+-------------------+------------------+----------------+----------------+---------------+-------------+--------------------+------------+----------+---------------+-------
+-------+------------+---------------------+----------------+---------------------+-------------+---------------------+----------------+--------------------+------------------+-----------
+-------+----------------+--------------+-----------------------+--------------
+ local_fd_supply_db | public       | item_service_unitofissue | code        |                1 |                | NO          | character varying |                        2 |
+          8 |                   |                         |               |                    |               |                    |                       |                      |
+              |                   |                  |                |                |               |             | local_fd_supply_db | pg_catalog | varchar  |               |
+       |            |                     | 1              | NO                  | NO          |                     |                |                    |                  |
+       |                | NEVER        |                       | YES
+ local_fd_supply_db | public       | item_service_unitofissue | description |                2 |                | NO          | character varying |                       16 |
+         64 |                   |                         |               |                    |               |                    |                       |                      |
+              |                   |                  |                |                |               |             | local_fd_supply_db | pg_catalog | varchar  |               |
+       |            |                     | 2              | NO                  | NO          |                     |                |                    |                  |
+       |                | NEVER        |                       | YES
+(2 rows)
+
+local_fd_supply_db=# SELECT column_name, is_nullable, is_updatable
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name   = 'item_service_unitofissue';
+ column_name | is_nullable | is_updatable
+-------------+-------------+--------------
+ code        | NO          | YES
+ description | NO          | YES
+(2 rows)
+

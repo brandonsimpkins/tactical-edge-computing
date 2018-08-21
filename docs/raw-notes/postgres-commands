@@ -1,0 +1,6 @@
+
+
+docker-compose exec supply-db pg_dump local_fd_supply_db  -U local_fd_supply_db_user --data-only -n public
+
+
+
