@@ -231,9 +231,6 @@ slow 3 hour automatic rollback of serices is nice should a deployment go south.
 ## TODO
 
 ### Proxy Tier
-- Create reverse proxy and x509 auth for django app
-  - Current builds are not deploying due to the x509 client auth requirements
-  - Need to rework the SSL server configs
 - Create mechanism to securely pull certs from S3 on docker image build or
   container start.
 
