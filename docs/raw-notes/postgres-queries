@@ -68,3 +68,8 @@ COPY 120
 # list table contents
 local_fd_supply_db=# select * from item_service_unitofissue;
 
+# add items from CSV
+local_fd_supply_db=# \copy item_service_item(nsn, category, common_name, description, price, ui_id, aac) from '/home/ec2-user/tactical-edge-computing/src/fd_supply_services/sample-data/csv/items.csv' delimiter ',' csv header;
+COPY 10356
+
+
