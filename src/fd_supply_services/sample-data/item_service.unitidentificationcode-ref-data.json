@@ -1,0 +1,58 @@
+[
+{
+  "model": "item_service.unitidentificationcode",
+  "pk": "N00039",
+  "fields": {
+    "description": "Space & Naval Warfare Systems Command",
+    "address": "4301 Pacific Highway, Bldg. OT4, San Diego, CA 92110-3127"
+  }
+},
+{
+  "model": "item_service.unitidentificationcode",
+  "pk": "N21879",
+  "fields": {
+    "description": "USS BATAAN (LHD 5)",
+    "address": "Norfolk, VA"
+  }
+},
+{
+  "model": "item_service.unitidentificationcode",
+  "pk": "N21947",
+  "fields": {
+    "description": "USS DECATUR (DDG 73)",
+    "address": "San Diego, CA"
+  }
+},
+{
+  "model": "item_service.unitidentificationcode",
+  "pk": "N23170",
+  "fields": {
+    "description": "USS GEORGE H W BUSH (CVN 77)",
+    "address": "Norfolk, VA"
+  }
+},
+{
+  "model": "item_service.unitidentificationcode",
+  "pk": "N65236",
+  "fields": {
+    "description": "Space and Naval Warfare Systems Center Atlantic (SSC LANT)",
+    "address": "P.O. Box 190022, North Charleston, SC 29419-9022"
+  }
+},
+{
+  "model": "item_service.unitidentificationcode",
+  "pk": "N66001",
+  "fields": {
+    "description": "Space & Naval Warfare Systems Center Pacific (SSC PAC)",
+    "address": "53560 Hull Street, San Diego, CA 92152-5001"
+  }
+},
+{
+  "model": "item_service.unitidentificationcode",
+  "pk": "N68561",
+  "fields": {
+    "description": "Space and Naval Warfare Systems Center Atlantic (SSC LANT)",
+    "address": "1837 Morris Street, Suite 3311, Norfolk, VA 23511-3432"
+  }
+}
+]

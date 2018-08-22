@@ -1,9 +1,12 @@
 
-# dump the db contents to json
-(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ./manage.py dumpdata > currentdb.json
+# dump ALL database contents to json
+./manage.py dumpdata
 
-# edit the json and delete the first few lines of stout from the settings.py
-(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ vim currentdb.json
+# dump a specific applications database contents to json
+./manage.py dumpdata item_service
+
+# dump a specific application table AND USE INDENTION FOR READABILITY!!!!
+./manage.py dumpdata --indent=2 item_service.unitidentificationcode
 
 # delete unwated migration scripts (or you could squash them)
 (python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ rm item_service/migrations/0004_inventory.py
@@ -44,4 +47,6 @@ DEBUG set to False
 /home/ec2-user/python-3.6-django-env/local/lib64/python3.6/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
   """)
 Installed 54 object(s) from 1 fixture(s)
+
+
 
