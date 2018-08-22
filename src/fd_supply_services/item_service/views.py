@@ -33,6 +33,12 @@ class UserList(generics.ListAPIView):
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAdminUser,)
 
+    # set the DjangoFilterBackend filter fields
+    filter_fields = ('is_superuser', 'groups', 'user_permissions')
+
+    # set the SearchFilter filter fields
+    search_fields = ('username', 'first_name', 'last_name')
+
 
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
@@ -44,6 +50,9 @@ class UnitIdentificationCodeList(generics.ListCreateAPIView):
     queryset = UnitIdentificationCode.objects.all()
     serializer_class = UnitIdentificationCodeSerializer
     permission_classes = (permissions.DjangoModelPermissions,)
+
+    # set the SearchFilter filter fields
+    search_fields = ('address', 'description')
 
 
 class UnitIdentificationCodeDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -58,6 +67,9 @@ class UnitOfIssueList(generics.ListCreateAPIView):
     serializer_class = UnitOfIssueSerializer
     permission_classes = (permissions.DjangoModelPermissions,)
 
+    # set the SearchFilter filter fields
+    search_fields = ('code', 'description')
+
 
 class UnitOfIssueDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = UnitOfIssue.objects.all()
@@ -71,6 +83,12 @@ class ItemList(generics.ListCreateAPIView):
     serializer_class = ItemSerializer
     permission_classes = (permissions.DjangoModelPermissions,)
 
+    # set the DjangoFilterBackend filter fields
+    filter_fields = ('category',)
+
+    # set the SearchFilter filter fields
+    search_fields = ('nsn', 'category', 'common_name', 'description')
+
 
 class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Item.objects.all()
@@ -83,6 +101,12 @@ class InventoryList(generics.ListCreateAPIView):
     queryset = Inventory.objects.all()
     serializer_class = InventorySerializer
     permission_classes = (permissions.DjangoModelPermissions,)
+
+    # set the DjangoFilterBackend filter fields
+    filter_fields = ('uic', 'nsn', 'onhand_quantity')
+
+    # set the SearchFilter filter fields
+    search_fields = ('id', 'uic__uic', 'nsn__nsn')
 
 
 class InventoryDetail(generics.RetrieveUpdateDestroyAPIView):
