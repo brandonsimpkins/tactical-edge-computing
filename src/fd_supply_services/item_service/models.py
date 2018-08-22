@@ -16,7 +16,7 @@ class UnitIdentificationCode(models.Model):
         ordering = ('uic',)
 
     def __str__(self):
-        return "UIC - {0}".format(self.uic)
+        return "{0} - {1}".format(self.uic, self.description)
 
 
 class UnitOfIssue(models.Model):
@@ -45,7 +45,7 @@ class Item(models.Model):
         ordering = ('nsn',)
 
     def __str__(self):
-        return "NSN - {0}".format(self.nsn)
+        return "{0} - {1}".format(self.nsn, self.common_name)
 
 
 class Inventory(models.Model):
