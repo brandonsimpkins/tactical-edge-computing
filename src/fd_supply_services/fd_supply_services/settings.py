@@ -153,6 +153,9 @@ WSGI_APPLICATION = 'fd_supply_services.wsgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.DjangoModelPermissions',
+    ),
     'PAGE_SIZE': 10
 }
 
