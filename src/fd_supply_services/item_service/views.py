@@ -3,8 +3,17 @@ from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from item_service.models import *
-from item_service.serializers import *
+
+from item_service.models import Inventory
+from item_service.models import Item
+from item_service.models import UnitIdentificationCode
+from item_service.models import UnitOfIssue
+
+from item_service.serializers import InventorySerializer
+from item_service.serializers import ItemSerializer
+from item_service.serializers import UnitIdentificationCodeSerializer
+from item_service.serializers import UnitOfIssueSerializer
+from item_service.serializers import UserSerializer
 
 
 @api_view(['GET'])

@@ -55,7 +55,7 @@ class Inventory(models.Model):
     nsn = models.ForeignKey(Item)
     onhand_quantity = models.IntegerField()
     onhand_allowance = models.IntegerField()
-    minimum_quantity =  models.IntegerField()
+    minimum_quantity = models.IntegerField()
 
     class Meta:
         ordering = ('id',)
