@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
+import sys
 import os
 import yaml
 
@@ -27,7 +28,8 @@ except KeyError:
     # If deployment type is not set, default to local tool settings. this
     # should make it easier to directly invoke manage.py commands.
     DEPLOYMENT_TYPE = "LOCAL-UTILS"
-    print("Deployment Type not set! Defaulting to {0}!".format(DEPLOYMENT_TYPE))
+    print("Deployment Type not set! Defaulting to {0}!".format(DEPLOYMENT_TYPE),
+          file=sys.stderr)
 
 # Load environment specific settings
 if DEPLOYMENT_TYPE == "DEV-LOCAL":
@@ -56,7 +58,7 @@ elif (DEPLOYMENT_TYPE == "PRODUCTION" or
     settings['database']['host'] = os.environ['DB_HOST']
 
 elif DEPLOYMENT_TYPE == "LOCAL-UTILS":
-    print("Loading LOCAL-UTILS Settings")
+    print("Loading LOCAL-UTILS Settings", file=sys.stderr)
     with open(os.path.join(CONFIG_DIR, "local-utils.yaml"), 'r') as stream:
         settings = yaml.load(stream)
 
@@ -76,7 +78,6 @@ try:
     DEBUG = settings['debug']
 except KeyError:
     print("Unable to read debug settings value, defaulting to FALSE.")
-print("DEBUG set to {0}".format(DEBUG))
 
 # do some environment debug logging
 if DEBUG:
