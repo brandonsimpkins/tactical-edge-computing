@@ -1,0 +1,47 @@
+
+# dump the db contents to json
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ./manage.py dumpdata > currentdb.json
+
+# edit the json and delete the first few lines of stout from the settings.py
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ vim currentdb.json
+
+# delete unwated migration scripts (or you could squash them)
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ rm item_service/migrations/0004_inventory.py
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ rm item_service/migrations/0005_auto_20180821_2333.py
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ rm item_service/migrations/0006_inventory_minimum_quantity.py
+
+# slick the database in the middle
+make docker-clean-postgres
+
+# re-run make migrations (when the app is running)
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ./manage.py makemigrations
+Deployment Type not set! Defaulting to LOCAL-UTILS!
+Loading LOCAL-UTILS Settings
+DEBUG set to False
+/home/ec2-user/python-3.6-django-env/local/lib64/python3.6/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+  """)
+Migrations for 'item_service':
+  item_service/migrations/0004_inventory.py
+    - Create model Inventory
+
+# migrate the db
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ./manage.py migrate
+Deployment Type not set! Defaulting to LOCAL-UTILS!
+Loading LOCAL-UTILS Settings
+DEBUG set to False
+/home/ec2-user/python-3.6-django-env/local/lib64/python3.6/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+  """)
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, item_service, sessions
+Running migrations:
+  Applying item_service.0004_inventory... OK
+
+# reload the data
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ./manage.py loaddata currentdb.json
+Deployment Type not set! Defaulting to LOCAL-UTILS!
+Loading LOCAL-UTILS Settings
+DEBUG set to False
+/home/ec2-user/python-3.6-django-env/local/lib64/python3.6/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+  """)
+Installed 54 object(s) from 1 fixture(s)
+
