@@ -51,3 +51,20 @@ fd_supply_db=> delete from django_migrations where app = 'item_service';
 fd_supply_db=> drop table if exists item_service_item;
 fd_supply_db=> drop table if exists item_service_unitidentificationcode;
 fd_supply_db=> drop table if exists item_service_unitofissue;
+
+# flush db data, make sure you type 'yes'
+(python-3.6-django-env) [ec2-user@farnsworth fd_supply_services]$ ./manage.py flush
+You have requested a flush of the database.
+This will IRREVERSIBLY DESTROY all data currently in the 'local_fd_supply_db' database,
+and return each table to an empty state.
+Are you sure you want to do this?
+
+    Type 'yes' to continue, or 'no' to cancel: yes
+
+# copy from CSV, make sure you us ethe full file path
+local_fd_supply_db=# \copy item_service_unitofissue(code, description) from '/home/ec2-user/tactical-edge-computing/src/fd_supply_services/sample-data/csv/ui-codes.csv' delimiter ',' csv header;
+COPY 120
+
+# list table contents
+local_fd_supply_db=# select * from item_service_unitofissue;
+
