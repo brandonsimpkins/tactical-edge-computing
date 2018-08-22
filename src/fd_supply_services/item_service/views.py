@@ -14,6 +14,7 @@ def api_root(request, format=None):
         'units of issue': reverse('unitofissue-list', request=request, format=format),
         'users': reverse('user-list', request=request, format=format),
         'uics': reverse('uic-list', request=request, format=format),
+        'inventory': reverse('inventory-list', request=request, format=format),
     })
 
 
@@ -64,3 +65,16 @@ class ItemDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ItemSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     lookup_field = 'nsn'
+
+
+class InventoryList(generics.ListCreateAPIView):
+    queryset = Inventory.objects.all()
+    serializer_class = InventorySerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class InventoryDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Inventory.objects.all()
+    serializer_class = InventorySerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    lookup_field = 'id'

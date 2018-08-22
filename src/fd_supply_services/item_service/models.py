@@ -45,4 +45,20 @@ class Item(models.Model):
         ordering = ('nsn',)
 
     def __str__(self):
-        return "Item NSN - {1}".format(self.nsn)
+        return "NSN - {0}".format(self.nsn)
+
+
+class Inventory(models.Model):
+    id = models.CharField("Inventory Record ID",
+                          max_length=19, primary_key=True)
+    uic = models.ForeignKey(UnitIdentificationCode)
+    nsn = models.ForeignKey(Item)
+    onhand_quantity = models.IntegerField()
+    onhand_allowance = models.IntegerField()
+    minimum_quantity =  models.IntegerField()
+
+    class Meta:
+        ordering = ('id',)
+
+    def __str__(self):
+        return "INV ID - {0}".format(self.id)

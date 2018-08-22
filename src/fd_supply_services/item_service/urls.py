@@ -27,4 +27,10 @@ urlpatterns = [
     url(r'^uic-detail/(?P<uic>[A-Z0-9]+)/$',
         views.UnitIdentificationCodeDetail.as_view(),
         name="uic-detail"),
+    url(r'^inventory/$',
+        views.InventoryList.as_view(),
+        name="inventory-list"),
+    url(r'^inventory/(?P<id>[0-9A-Za-z]+)/$',
+        views.InventoryDetail.as_view(),
+        name="inventory-detail"),
 ]
