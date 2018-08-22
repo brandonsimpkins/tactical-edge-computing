@@ -128,7 +128,7 @@ MIDDLEWARE = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.RemoteUserBackend',
+    'fd_supply_services.x509_middleware.ReverseProxyRemoteUserBackend',
 ]
 
 ROOT_URLCONF = 'fd_supply_services.urls'
