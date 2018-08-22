@@ -97,6 +97,6 @@ docker-clean:
 	-docker rmi `docker images --filter "dangling=true" -q --no-trunc`
 	-docker rmi `docker images | grep "none" | awk '/ / { print $3 }'`
 
-docker-clean-postgres:
+docker-clean-postgres: docker-clean
 	-docker volume rm `docker volume ls | awk '{print $2}' | grep 'postgres'`
 
