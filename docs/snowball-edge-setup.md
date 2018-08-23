@@ -282,7 +282,7 @@ To create a EC2 instance and be able to connect to it:
 04. Create a virtual network interface associated with the active physical
     network interface.
     ```
-    [bssimpk@MacBook ~]$ snowballEdge create-virtual-network-interface --proilfe TEC \
+    [bssimpk@MacBook ~]$ snowballEdge create-virtual-network-interface --profile TEC \
       --ip-address-assignment DHCP --physical-network-interface-id s.ni-8b34890878bc0facc
     {
       "VirtualNetworkInterface" : {
