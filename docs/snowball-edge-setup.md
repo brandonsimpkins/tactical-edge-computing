@@ -126,7 +126,7 @@ We will need to use the `snowballEdge` CLI to obtain the credentials to interact
       ```
 04. Find the **CertificateArn** for the snowball edge certificate:
     ```
-    [bssimpk@MacBook ~]$ snowballEdge describe-service --service-id ec2
+    [bssimpk@MacBook ~]$ snowballEdge describe-service  --profile TEC --service-id ec2
     {
       "ServiceId" : "ec2",
       "Status" : {
