@@ -73,3 +73,9 @@ local_fd_supply_db=# \copy item_service_item(nsn, category, common_name, descrip
 COPY 10356
 
 
+# delete the last 1000 rows of item data
+local_fd_supply_db=# delete from item_service_item where nsn in (select nsn from item_service_item order by nsn desc limit 1000);
+
+
+# truncate the item table:
+local_fd_supply_db=# truncate item_service_item cascade;
