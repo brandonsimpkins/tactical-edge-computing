@@ -1,0 +1,9 @@
+[ec2-user@snowball ~]$ ssh -R 5432:localhost:5432 -i ~/.ssh/keys/bssimpk-dev.pem ec2-user@farnsworth.dev.simpkins.cloud
+
+
+pretty sure the one above was the original, and the one below is the final one that worked correctly:
+
+ssh -NR 0.0.0.0:5432:localhost:5432 -i ~/.ssh/keys/bssimpk-dev.pem ec2-user@bastion-us-east-1a.production.tec.simpkins.cloud
+
+
+
